@@ -37,4 +37,14 @@ public class Conta {
     public void exibirSaldo(){
         System.out.println("Saldo atual após operação: " + saldo);
     }
+
+    //Getter para acessar o titular fora do arquivo
+    public String getTitular() {
+        return titular;
+    }
+
+    //Getter para acessar o saldo fora do arquivo e manipula-lo quando permitido e necessário
+    public double getSaldo() {
+        return saldo;
+    }
 }
