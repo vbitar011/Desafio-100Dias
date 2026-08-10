@@ -3,6 +3,7 @@ package dia01;
 import dia02.ContaPoupanca;
 import dia03.ContaCorrente;
 import dia04.Banco;
+import dia05.SaldoInsuficienteException;
 
 public class Main{
   public static void main(String[] args){
@@ -14,14 +15,14 @@ public class Main{
     meuBanco.adicionarConta(minhaConta);
     meuBanco.adicionarConta(anaConta);
     meuBanco.adicionarConta(ClaraConta);
-    //minhaConta.depositar(10.0);
-    //minhaConta.exibirSaldo();
 
     meuBanco.exibirRelatorio();
-    //anaConta.aplicarRendimento();
-    //anaConta.exibirSaldo();
 
-    //ClaraConta.depositar(250.0);
-    //ClaraConta.sacar(50.0);
+    try {
+      minhaConta.sacar(5000.0);
+      System.out.println("Por favor, retire seu dinheiro na boca do caixa.");
+    } catch (SaldoInsuficienteException e){
+       System.out.println("Operação cancelada pelo banco: " + e.getMessage());
+    }
   }
 }

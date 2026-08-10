@@ -1,5 +1,7 @@
 package dia01;
 
+import dia05.SaldoInsuficienteException;
+
 public class Conta {
     //Definindo atributos
     private String titular;
@@ -16,7 +18,7 @@ public class Conta {
     //Função para saque que irá verificar antes de executar.
     public void sacar(double valor){
         if (saldo < valor) {
-            System.out.println("Saldo insuficiente!");
+            throw new dia05.SaldoInsuficienteException("Erro no saque: Saldo insuficiente. Saldo atual: R$ " + this.saldo);
         } else {
             saldo = saldo - valor;
             System.out.println("Saque de R$" + valor + " realizado com sucesso!");
@@ -25,9 +27,9 @@ public class Conta {
 
     //Função para depósito, que também verifica antes de executar
     public void depositar(double valor){
-        if (valor <= 0){
-            System.out.println("Valor insuficiente para deposito. Tente Novamente!");
-        } else {
+        if (valor <= 0) {
+           System.out.println("Valor Insuficiente! Tente novamente");
+        } else{
             saldo = saldo + valor;
             System.out.println( valor + " Depositado com sucesso!");
         }
