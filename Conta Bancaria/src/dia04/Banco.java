@@ -21,9 +21,7 @@ public class Banco {
         System.out.println("\n=== RELATÓRIO DE CONTAS DO BANCO ===");
 
         // Lê-se: "Para cada 'Conta' (que vamos chamar de 'contaAtual') dentro da 'listaDeContas'..."
-        for (Conta contaAtual : listaDeContas) {
-            System.out.println("Titular: " + contaAtual.getTitular() + " | Saldo: R$ " + contaAtual.getSaldo());
-        }
+        listaDeContas.forEach(conta -> System.out.println("Titular: " + conta.getTitular() + " | Saldo: R$ " + conta.getSaldo()));
 
         System.out.println("====================================");
     }
