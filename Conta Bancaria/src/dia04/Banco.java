@@ -3,6 +3,7 @@ package dia04;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 import dia01.Conta;
 
 public class Banco {
@@ -25,5 +26,18 @@ public class Banco {
 
         System.out.println("====================================");
     }
+
+    public double calcularPatrimonioTotal(){
+        return listaDeContas.stream()
+                .mapToDouble(Conta::getSaldo) //Pega todos os saldos das contas
+                .sum(); //Soma todos
+    }
+
+    public List<Conta> buscarContasComSaldoAte(double valorMaximo){
+        return listaDeContas.stream()
+                .filter(conta -> conta.getSaldo() <= valorMaximo) //Filtra as contas que atendem ao critério pedido
+                .collect(Collectors.toList()); //Devolve o Fluxo filtrado em lista
+    }
+
 }
 
