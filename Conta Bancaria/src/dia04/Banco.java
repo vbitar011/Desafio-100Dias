@@ -39,5 +39,12 @@ public class Banco {
                 .collect(Collectors.toList()); //Devolve o Fluxo filtrado em lista
     }
 
+    public Conta buscarContaPorNumero(String numero){
+        return listaDeContas.stream()
+                .filter(conta -> conta.getNumeroDaConta().equalsIgnoreCase(numero))
+                .findFirst()
+                .orElse(null); //Retornará 'null' se nenhuma conta for encontrada
+    }
+
 }
 

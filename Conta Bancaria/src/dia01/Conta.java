@@ -49,4 +49,7 @@ public class Conta {
     public double getSaldo() {
         return saldo;
     }
+
+    //Getter para acessar o número da conta e permitir a busca pela conta no menu
+    public String getNumeroDaConta(){ return numeroDaConta; }
 }

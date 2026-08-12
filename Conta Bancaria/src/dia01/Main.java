@@ -13,8 +13,6 @@ public class Main{
 
     Scanner teclado = new Scanner(System.in);
     Banco meuBanco = new Banco();
-    ContaCorrente minhaConta = new ContaCorrente("Victor", " 12345-6", 400.0);
-    meuBanco.adicionarConta(minhaConta);
 
     int opcao = -1;
     while (opcao != 0) {
@@ -23,8 +21,9 @@ public class Main{
       System.out.println("2 - Depositar");
       System.out.println("3 - Sacar");
       System.out.println("4 - Relatório Geral do Banco");
-      System.out.println("5 - Ver Patrimônio Total do Banco (Stream)");
-      System.out.println("6 - Filtrar Contas com Saldo Máximo (Stream)");
+      System.out.println("5 - Criar Nova Conta");
+      System.out.println("6 - Ver Patrimônio Total do Banco (Stream)");
+      System.out.println("7 - Filtrar Contas com Saldo Máximo (Stream)");
       System.out.println("0 - Sair");
       System.out.print("Escolha uma opção: ");
 
@@ -32,23 +31,53 @@ public class Main{
 
       switch (opcao) {
         case 1:
-          minhaConta.exibirSaldo();
+          teclado.nextLine();
+          System.out.print("Digite o número da conta: ");
+          String numSaldo = teclado.nextLine();
+
+          dia01.Conta contaSaldo = meuBanco.buscarContaPorNumero(numSaldo);
+
+          if(contaSaldo != null){
+            contaSaldo.exibirSaldo();
+          } else {
+            System.out.println("Conta não encontrada!");
+          }
           break;
 
         case 2:
-          System.out.print("Digite o valor para depósito: R$ ");
-          double valorDeposito = teclado.nextDouble();
-          minhaConta.depositar(valorDeposito);
+          teclado.nextLine();
+          System.out.print("Digite o número da conta: ");
+          String numDeposito = teclado.nextLine();
+
+          dia01.Conta contaDeposito = meuBanco.buscarContaPorNumero(numDeposito);
+
+          if(contaDeposito != null){
+            System.out.print("Digite o valor para depósito: R$ ");
+            double valorDeposito = teclado.nextDouble();
+            contaDeposito.depositar(valorDeposito);
+          } else {
+            System.out.println("Conta não encontrada!");
+          }
           break;
 
         case 3:
-          System.out.print("Digite o valor para saque: R$ ");
-          double valorSaque = teclado.nextDouble();
-          try {
-            minhaConta.sacar(valorSaque);
-            System.out.println("Por favor, retire seu dinheiro na boca do caixa.");
-          } catch (SaldoInsuficienteException e){
-            System.out.println("Operação cancelada pelo banco: " + e.getMessage());
+          teclado.nextLine();
+          System.out.print("Digite o numero da conta: ");
+          String numSaque = teclado.nextLine();
+
+          dia01.Conta contaSaque = meuBanco.buscarContaPorNumero(numSaque);
+
+          if (contaSaque != null){
+            System.out.print("Digite o valor para saque: R$ ");
+            double valorSaque = teclado.nextDouble();
+            try {
+              contaSaque.sacar(valorSaque);
+              System.out.println("Por favor, retire seu dinheiro na boca do caixa.");
+            } catch (SaldoInsuficienteException e){
+              System.out.println("Operação cancelada pelo banco: " + e.getMessage());
+            }
+          } else {
+            System.out.println("Conta não Encontrada!");
           }
           break;
 
@@ -57,11 +86,39 @@ public class Main{
           break;
 
         case 5:
+          System.out.println("\n--- CADASTRO DE NOVA CONTA ---");
+          System.out.println("1 - Conta Corrente");
+          System.out.println("2 - Conta Poupança");
+          System.out.print("Escolha o tipo: ");
+          int tipo = teclado.nextInt();
+          teclado.nextLine(); //Limpar buffer do teclado
+
+          System.out.print("Nome do Titular: ");
+          String nome = teclado.nextLine();
+
+          System.out.print("Número da Conta: ");
+          String numero = teclado.nextLine();
+
+          System.out.print("Saldo inicial: R$ ");
+          double saldoInicial = teclado.nextDouble();
+
+          if (tipo == 1){
+            meuBanco.adicionarConta(new dia03.ContaCorrente(nome, numero, saldoInicial));
+          } else if (tipo == 2) {
+            System.out.print("Taxa de Rendimento (ex.: 0.05 para 5%): ");
+            double taxa = teclado.nextDouble();
+            meuBanco.adicionarConta(new dia02.ContaPoupanca(nome, numero, saldoInicial, taxa));
+          } else {
+            System.out.println("Tipo Inválido! Conta não criada.");
+          }
+          break;
+
+        case 6:
           double total = meuBanco.calcularPatrimonioTotal();
           System.out.println("\nPatrimônio Total do Banco: R$ " + total);
           break;
 
-        case 6:
+        case 7:
           System.out.print("Digite o saldo máximo para filtro: R$ ");
           double limite = teclado.nextDouble();
           List<dia01.Conta> filtradas = meuBanco.buscarContasComSaldoAte(limite);
@@ -83,4 +140,3 @@ public class Main{
     teclado.close();
   }
 }
-
