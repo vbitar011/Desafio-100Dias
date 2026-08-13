@@ -1,8 +1,9 @@
 package dia03;
 
 import dia01.Conta;
+import dia09.Tributavel;
 
-public class ContaCorrente extends Conta {
+public class ContaCorrente extends Conta implements Tributavel {
 
     public ContaCorrente(String titular, String numeroDaConta, double saldo){
         super(titular, numeroDaConta, saldo);
@@ -14,5 +15,10 @@ public class ContaCorrente extends Conta {
         double valorTotal = valor + taxaSaque;
 
         super.sacar(valorTotal);
+    }
+
+    @Override
+    public double calcularImposto(){
+        return getSaldo() * 0.05;
     }
 }
