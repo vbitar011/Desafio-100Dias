@@ -1,12 +1,17 @@
 package dia01;
 
 import dia05.SaldoInsuficienteException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Conta {
     //Definindo atributos
     private String titular;
     private String numeroDaConta;
     protected double saldo;
+    protected List<String> extrato = new ArrayList<>();
 
     public Conta(String titular, String numeroDaConta, double saldo){
         //Iniciando os atributos definidos
@@ -22,6 +27,8 @@ public class Conta {
         } else {
             saldo = saldo - valor;
             System.out.println("Saque de R$" + valor + " realizado com sucesso!");
+            String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+            extrato.add(dataHora + " - Saque: R$ " + valor);
         }
     }
 
@@ -32,7 +39,20 @@ public class Conta {
         } else{
             saldo = saldo + valor;
             System.out.println( valor + " Depositado com sucesso!");
+            String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+            extrato.add(dataHora + " - Depósito: R$ " + valor);
         }
+    }
+
+    //Método para exibição do extrato
+    public void exibirExtrato(){
+        System.out.println("\n=== EXTRATO DA CONTA " + numeroDaConta + " ===");
+        if (extrato.isEmpty()){
+            System.out.println("Nenhuma movimentação registrada.");
+        } else {
+            extrato.forEach(movimento -> System.out.println(movimento));
+        }
+        System.out.println("Saldo atual: R$ " +getSaldo());
     }
 
     //Exibição do saldo após operações

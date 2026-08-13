@@ -46,5 +46,9 @@ public class Banco {
                 .orElse(null); //Retornará 'null' se nenhuma conta for encontrada
     }
 
+    public List<Conta> getListaDeContas(){
+        return listaDeContas;
+    }
+
 }
 

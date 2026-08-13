@@ -24,6 +24,8 @@ public class Main{
       System.out.println("5 - Criar Nova Conta");
       System.out.println("6 - Ver Patrimônio Total do Banco (Stream)");
       System.out.println("7 - Filtrar Contas com Saldo Máximo (Stream)");
+      System.out.println("8 - Tirar Extrato");
+      System.out.println("9 - Cobrar Impostos");
       System.out.println("0 - Sair");
       System.out.print("Escolha uma opção: ");
 
@@ -125,6 +127,37 @@ public class Main{
 
           System.out.println("\n=== CONTAS ENCONTRADAS (Até R$ " + limite + ") ===");
           filtradas.forEach(c -> System.out.println("Titular: " + c.getTitular() + "| Saldo: R$ " + c.getSaldo()));
+          break;
+
+        case 8:
+          teclado.nextLine();
+          System.out.print("Digite o número da conta: ");
+          String numExtrato = teclado.nextLine();
+
+          dia01.Conta contaExtrato = meuBanco.buscarContaPorNumero(numExtrato);
+
+          if(contaExtrato != null){
+            contaExtrato.exibirExtrato();
+          } else {
+            System.out.println("Conta não encontrada!");
+          }
+          break;
+
+        case 9:
+          System.out.println("\n--- COBRANÇA DE IMPOSTOS ---");
+          meuBanco.getListaDeContas().stream()
+                  .filter(conta -> conta instanceof dia09.Tributavel)
+                  .map(conta -> (dia09.Tributavel) conta)
+                  .forEach(tributavel -> {
+                    double imposto = tributavel.calcularImposto();
+                    dia01.Conta c = (dia01.Conta) tributavel;
+                    try {
+                      c.sacar(imposto);
+                      System.out.println("Imposto de R$ " + imposto + " cobrado da conta " + c.getNumeroDaConta());
+                    } catch (SaldoInsuficienteException e){
+                      System.out.println("Conta " + c.getNumeroDaConta() + "sem saldo para pagar imposto!");
+                    }
+                  });
           break;
 
         case 0:
