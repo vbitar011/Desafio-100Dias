@@ -14,6 +14,10 @@ public class Main{
     Scanner teclado = new Scanner(System.in);
     Banco meuBanco = new Banco();
 
+    //Carrega automaticamente as contas salvas anteriormente
+    List<Conta> contasSalvas = dia10.GerenciadorDeArquivos.carregarContas();
+    contasSalvas.forEach(meuBanco :: adicionarConta);
+
     int opcao = -1;
     while (opcao != 0) {
       System.out.println("\n=== CAIXA ELETRÔNICO ===");
@@ -162,6 +166,7 @@ public class Main{
 
         case 0:
           System.out.println("Desligando o Caixa Eletrônico. Volte sempre!");
+          dia10.GerenciadorDeArquivos.salvarContas(meuBanco.getListaDeContas());
           break;
 
         default:
