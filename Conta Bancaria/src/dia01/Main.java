@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class Main{
   public static void main(String[] args){
+    dia11.ConexaoDB.conectar();
 
     Scanner teclado = new Scanner(System.in);
     Banco meuBanco = new Banco();
