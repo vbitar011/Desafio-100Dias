@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class Main{
   public static void main(String[] args){
     dia11.ConexaoDB.conectar();
+    dia12.ContaDAO.criarTabelaSeNaoExistir();
 
     Scanner teclado = new Scanner(System.in);
     Banco meuBanco = new Banco();
@@ -110,6 +111,10 @@ public class Main{
           double saldoInicial = teclado.nextDouble();
 
           if (tipo == 1){
+            dia03.ContaCorrente novaCC = new ContaCorrente(nome, numero, saldoInicial);
+            meuBanco.adicionarConta(novaCC);
+            dia12.ContaDAO.salvarConta(novaCC);
+
             meuBanco.adicionarConta(new dia03.ContaCorrente(nome, numero, saldoInicial));
           } else if (tipo == 2) {
             System.out.print("Taxa de Rendimento (ex.: 0.05 para 5%): ");
