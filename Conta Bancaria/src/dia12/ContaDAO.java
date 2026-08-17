@@ -2,6 +2,7 @@ package dia12;
 
 import dia01.Conta;
 import dia02.ContaPoupanca;
+import dia03.ContaCorrente;
 import dia11.ConexaoDB;
 
 import java.awt.desktop.SystemSleepEvent;
@@ -9,6 +10,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.ResultSet;
+import java.util.List;
+import java.util.ArrayList;
 
 public class ContaDAO {
 
@@ -43,15 +47,43 @@ public class ContaDAO {
             pstmt.setDouble(3, conta.getSaldo());
 
             if (conta instanceof ContaPoupanca){
-                pstmt.setString(4, "POUPANÇA");
+                pstmt.setString(4, "POUPANCA");
             } else{
                 pstmt.setString(4, "CORRENTE");
             }
 
             pstmt.executeUpdate();
-            System.out.println("✅ Conta " + conta.getNumeroDaConta() + "salva no Banco de Dados!");
+            System.out.println("✅ Conta " + conta.getNumeroDaConta() + " salva no Banco de Dados!");
         } catch (SQLException e){
             System.out.println("Erro ao salvar a conta: " + e.getMessage());
         }
+    }
+
+    public static List<Conta> carregarContas(){
+        List<Conta> contasCarregadas = new ArrayList<>();
+        String sql = "SELECT * FROM contas";
+
+        try (Connection conexao = ConexaoDB.conectar();
+             Statement stmt = conexao.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()){
+                String numero = rs.getString("numero");
+                String titular = rs.getString("titular");
+                double saldo = rs.getDouble("saldo");
+                String tipo = rs.getString("tipo");
+
+                if (tipo.equals("POUPANCA")){
+                    contasCarregadas.add(new ContaPoupanca(titular, titular, saldo, 0.05));
+                } else {
+                    contasCarregadas.add(new ContaCorrente(titular, numero, saldo));
+                }
+            }
+            System.out.println("✅ Dados carregados do Banco SQLite com sucesso!");
+        } catch (SQLException e){
+            System.out.println("❌ Erro ao buscar contas no banco: " + e.getMessage());
+        }
+
+        return contasCarregadas;
     }
 }

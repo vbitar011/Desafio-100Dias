@@ -17,7 +17,7 @@ public class Main{
     Banco meuBanco = new Banco();
 
     //Carrega automaticamente as contas salvas anteriormente
-    List<Conta> contasSalvas = dia10.GerenciadorDeArquivos.carregarContas();
+    List<Conta> contasSalvas = dia12.ContaDAO.carregarContas();
     contasSalvas.forEach(meuBanco :: adicionarConta);
 
     int opcao = -1;
@@ -116,10 +116,15 @@ public class Main{
             dia12.ContaDAO.salvarConta(novaCC);
 
             meuBanco.adicionarConta(new dia03.ContaCorrente(nome, numero, saldoInicial));
+
           } else if (tipo == 2) {
             System.out.print("Taxa de Rendimento (ex.: 0.05 para 5%): ");
             double taxa = teclado.nextDouble();
-            meuBanco.adicionarConta(new dia02.ContaPoupanca(nome, numero, saldoInicial, taxa));
+
+            dia02.ContaPoupanca novaCP = new dia02.ContaPoupanca(nome, numero, saldoInicial, taxa);
+            meuBanco.adicionarConta(novaCP);
+            dia12.ContaDAO.salvarConta(novaCP);
+
           } else {
             System.out.println("Tipo Inválido! Conta não criada.");
           }
@@ -172,7 +177,6 @@ public class Main{
 
         case 0:
           System.out.println("Desligando o Caixa Eletrônico. Volte sempre!");
-          dia10.GerenciadorDeArquivos.salvarContas(meuBanco.getListaDeContas());
           break;
 
         default:
