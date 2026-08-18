@@ -63,6 +63,7 @@ public class Main{
             System.out.print("Digite o valor para depósito: R$ ");
             double valorDeposito = teclado.nextDouble();
             contaDeposito.depositar(valorDeposito);
+            dia12.ContaDAO.atualizarSaldo(contaDeposito);
           } else {
             System.out.println("Conta não encontrada!");
           }
@@ -81,6 +82,7 @@ public class Main{
             try {
               contaSaque.sacar(valorSaque);
               System.out.println("Por favor, retire seu dinheiro na boca do caixa.");
+              dia12.ContaDAO.atualizarSaldo(contaSaque);
             } catch (SaldoInsuficienteException e){
               System.out.println("Operação cancelada pelo banco: " + e.getMessage());
             }

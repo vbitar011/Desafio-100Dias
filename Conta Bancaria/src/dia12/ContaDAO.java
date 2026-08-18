@@ -86,4 +86,20 @@ public class ContaDAO {
 
         return contasCarregadas;
     }
+
+    public static void atualizarSaldo(Conta conta){
+        String sql = "UPDATE contas SET saldo = ? WHERE numero = ?";
+
+        try (Connection conexao = ConexaoDB.conectar();
+            PreparedStatement pstmt = conexao.prepareStatement(sql)){
+
+            pstmt.setDouble(1, conta.getSaldo());
+            pstmt.setString(2, conta.getNumeroDaConta());
+            pstmt.executeUpdate();
+
+            System.out.println("✅ Saldo sincronizado com o Banco de Dados SQLite!");
+        } catch (SQLException e) {
+            System.out.println("❌ Erro ao atualizar o saldo no banco: " + e.getMessage());
+        }
+    }
 }

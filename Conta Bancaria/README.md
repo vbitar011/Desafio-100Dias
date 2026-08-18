@@ -38,7 +38,7 @@ Durante o desenvolvimento deste sistema, foram aplicados os seguintes conceitos 
     *   Uso massivo de `Collections` (`List`, `ArrayList`).
     *   Manipulação de dados com `Stream API`, `Lambdas` e `Method References`.
     *   Manipulação de datas com a biblioteca `java.time`.
-*   **Banco de Dados & JDBC:** Conexão nativa do Java com **SQLite**, executando comandos SQL (`CREATE TABLE`, `INSERT`, `SELECT`) isolados no padrão de arquitetura **DAO (Data Access Object)**.
+*   *   **Persistência de Dados (DB):** Salvamento (INSERT), carregamento automático (SELECT) e atualização de saldos em tempo real (UPDATE) utilizando o banco de dados SQLite.
 
 ---
 
