@@ -102,4 +102,19 @@ public class ContaDAO {
             System.out.println("❌ Erro ao atualizar o saldo no banco: " + e.getMessage());
         }
     }
+
+    public static void deletarConta(String numeroDaConta){
+        String sql = "DELETE FROM contas WHERE numero= ?";
+
+        try (Connection conexao = ConexaoDB.conectar();
+            PreparedStatement pstmt = conexao.prepareStatement(sql)){
+
+            pstmt.setString(1, numeroDaConta);
+            pstmt.executeUpdate(); //Executa o DELETE
+
+            System.out.println("✅ Conta removida do Banco de Dados com sucesso!");
+        } catch (SQLException e){
+            System.out.println("❌ Erro ao excluir a conta: " + e.getMessage());
+        }
+    }
 }

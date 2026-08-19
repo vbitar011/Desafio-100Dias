@@ -4,6 +4,7 @@ import dia02.ContaPoupanca;
 import dia03.ContaCorrente;
 import dia04.Banco;
 import dia05.SaldoInsuficienteException;
+import dia11.ConexaoDB;
 
 import java.util.List;
 import java.util.Scanner;
@@ -32,6 +33,7 @@ public class Main{
       System.out.println("7 - Filtrar Contas com Saldo Máximo (Stream)");
       System.out.println("8 - Tirar Extrato");
       System.out.println("9 - Cobrar Impostos");
+      System.out.println("10 - Encerrar Conta");
       System.out.println("0 - Sair");
       System.out.print("Escolha uma opção: ");
 
@@ -175,6 +177,26 @@ public class Main{
                       System.out.println("Conta " + c.getNumeroDaConta() + "sem saldo para pagar imposto!");
                     }
                   });
+          break;
+
+        case 10:
+          System.out.print("Digite o número da conta que deseja ENCERRAR: ");
+          String numEncerramento = teclado.next();
+
+          Conta contaParaEncerrar = meuBanco.buscarContaPorNumero(numEncerramento);
+
+          if (contaParaEncerrar != null){ //Tenta achar a conta
+            if (contaParaEncerrar.getSaldo() == 00){ //Verifica se o saldo está zerado para ser encerrada
+              meuBanco.removerConta(contaParaEncerrar);//remove da RAM
+              dia12.ContaDAO.deletarConta(numEncerramento);//Remove do banco de dados
+              System.out.println("Conta encerrada definitivamente.");
+            } else {
+              System.out.println("⚠️ NEGADO: A conta possui saldo de R$ " + contaParaEncerrar.getSaldo() + ".");
+              System.out.println("Você precisa sacar ou transferir todo o dinheiro antes de encerrar.");
+            }
+          } else {
+            System.out.println("Conta não encontrada!");
+          }
           break;
 
         case 0:

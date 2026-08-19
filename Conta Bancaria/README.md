@@ -38,8 +38,11 @@ Durante o desenvolvimento deste sistema, foram aplicados os seguintes conceitos 
     *   Uso massivo de `Collections` (`List`, `ArrayList`).
     *   Manipulação de dados com `Stream API`, `Lambdas` e `Method References`.
     *   Manipulação de datas com a biblioteca `java.time`.
-*   *   **Persistência de Dados (DB):** Salvamento (INSERT), carregamento automático (SELECT) e atualização de saldos em tempo real (UPDATE) utilizando o banco de dados SQLite.
-
+*   **Persistência de Dados (CRUD Completo com SQLite):**
+    * **C**reate: Salvamento seguro de novas contas (`INSERT`).
+    * **R**ead: Carregamento automático de clientes (`SELECT`).
+    * **U**pdate: Atualização financeira de saldos em tempo real (`UPDATE`).
+    * **D**elete: Encerramento de contas com validação de segurança de saldo zerado (`DELETE`).
 ---
 
 ## 🚀 Como Executar o Projeto

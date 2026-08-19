@@ -50,5 +50,9 @@ public class Banco {
         return listaDeContas;
     }
 
+    public void removerConta(Conta conta){
+        this.listaDeContas.remove(conta);
+    }
+
 }
 
