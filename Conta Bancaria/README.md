@@ -43,6 +43,7 @@ Durante o desenvolvimento deste sistema, foram aplicados os seguintes conceitos 
     * **R**ead: Carregamento automático de clientes (`SELECT`).
     * **U**pdate: Atualização financeira de saldos em tempo real (`UPDATE`).
     * **D**elete: Encerramento de contas com validação de segurança de saldo zerado (`DELETE`).
+*   **Prevenção de Falhas e UX:** Implementação de classes utilitárias (`TecladoUtil`) com laços de repetição e `try-catch` para blindar o sistema contra entradas inválidas (InputMismatchException), garantindo o funcionamento contínuo do terminal.
 ---
 
 ## 🚀 Como Executar o Projeto

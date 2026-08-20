@@ -35,9 +35,7 @@ public class Main{
       System.out.println("9 - Cobrar Impostos");
       System.out.println("10 - Encerrar Conta");
       System.out.println("0 - Sair");
-      System.out.print("Escolha uma opção: ");
-
-      opcao = teclado.nextInt();
+      opcao = dia16.TecladoUtil.lerInteiro(teclado, "Escolha uma opção: ");
 
       switch (opcao) {
         case 1:
@@ -62,8 +60,7 @@ public class Main{
           dia01.Conta contaDeposito = meuBanco.buscarContaPorNumero(numDeposito);
 
           if(contaDeposito != null){
-            System.out.print("Digite o valor para depósito: R$ ");
-            double valorDeposito = teclado.nextDouble();
+            double valorDeposito = dia16.TecladoUtil.lerDouble(teclado, "Digite o valor para depósito: R$ ");
             contaDeposito.depositar(valorDeposito);
             dia12.ContaDAO.atualizarSaldo(contaDeposito);
           } else {
