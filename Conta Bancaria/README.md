@@ -44,6 +44,10 @@ Durante o desenvolvimento deste sistema, foram aplicados os seguintes conceitos 
     * **U**pdate: Atualização financeira de saldos em tempo real (`UPDATE`).
     * **D**elete: Encerramento de contas com validação de segurança de saldo zerado (`DELETE`).
 *   **Prevenção de Falhas e UX:** Implementação de classes utilitárias (`TecladoUtil`) com laços de repetição e `try-catch` para blindar o sistema contra entradas inválidas (InputMismatchException), garantindo o funcionamento contínuo do terminal.
+*   **Arquitetura Clean Code:**
+    * Aplicação do Princípio da Responsabilidade Única (SRP - S.O.L.I.D), eliminando *God Classes*.
+    * Separação do sistema em camadas lógicas (Dados, Negócios e Apresentação via `CaixaEletronicoUI`).
+    * Uso de Injeção de Dependência via construtores para compartilhamento seguro de instâncias.
 ---
 
 ## 🚀 Como Executar o Projeto
