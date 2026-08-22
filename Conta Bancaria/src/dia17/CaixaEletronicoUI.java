@@ -28,17 +28,14 @@ public class CaixaEletronicoUI {
             System.out.println("3 - Sacar");
             System.out.println("4 - Relatório Geral do Banco");
             System.out.println("5 - Criar Nova Conta");
-            System.out.println("6 - Ver Patrimônio Total do Banco (Stream)");
-            System.out.println("7 - Filtrar Contas com Saldo Máximo (Stream)");
-            System.out.println("8 - Tirar Extrato");
-            System.out.println("9 - Cobrar Impostos");
-            System.out.println("10 - Encerrar Conta");
+            System.out.println("6 - Tirar Extrato");
+            System.out.println("7 - Cobrar Impostos");
+            System.out.println("8 - Encerrar Conta");
             System.out.println("0 - Sair");
             opcao = dia16.TecladoUtil.lerInteiro(teclado, "Escolha uma opção: ");
 
             switch (opcao) {
                 case 1:
-                    teclado.nextLine();
                     System.out.print("Digite o número da conta: ");
                     String numSaldo = teclado.nextLine();
 
@@ -52,7 +49,6 @@ public class CaixaEletronicoUI {
                     break;
 
                 case 2:
-                    teclado.nextLine();
                     System.out.print("Digite o número da conta: ");
                     String numDeposito = teclado.nextLine();
 
@@ -68,7 +64,6 @@ public class CaixaEletronicoUI {
                     break;
 
                 case 3:
-                    teclado.nextLine();
                     System.out.print("Digite o numero da conta: ");
                     String numSaque = teclado.nextLine();
 
@@ -127,20 +122,6 @@ public class CaixaEletronicoUI {
                     break;
 
                 case 6:
-                    double total = meuBanco.calcularPatrimonioTotal();
-                    System.out.println("\nPatrimônio Total do Banco: R$ " + total);
-                    break;
-
-                case 7:
-                    double limite = dia16.TecladoUtil.lerDouble(teclado, "Digite o saldo máximo para filtro: R$ ");
-                    List<dia01.Conta> filtradas = meuBanco.buscarContasComSaldoAte(limite);
-
-                    System.out.println("\n=== CONTAS ENCONTRADAS (Até R$ " + limite + ") ===");
-                    filtradas.forEach(c -> System.out.println("Titular: " + c.getTitular() + "| Saldo: R$ " + c.getSaldo()));
-                    break;
-
-                case 8:
-                    teclado.nextLine();
                     System.out.print("Digite o número da conta: ");
                     String numExtrato = teclado.nextLine();
 
@@ -153,7 +134,7 @@ public class CaixaEletronicoUI {
                     }
                     break;
 
-                case 9:
+                case 7:
                     System.out.println("\n--- COBRANÇA DE IMPOSTOS ---");
                     meuBanco.getListaDeContas().stream()
                             .filter(conta -> conta instanceof dia09.Tributavel)
@@ -170,7 +151,7 @@ public class CaixaEletronicoUI {
                             });
                     break;
 
-                case 10:
+                case 8:
                     System.out.print("Digite o número da conta que deseja ENCERRAR: ");
                     String numEncerramento = teclado.next();
 

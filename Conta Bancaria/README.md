@@ -47,7 +47,8 @@ Durante o desenvolvimento deste sistema, foram aplicados os seguintes conceitos 
 *   **Arquitetura Clean Code:**
     * Aplicação do Princípio da Responsabilidade Única (SRP - S.O.L.I.D), eliminando *God Classes*.
     * Separação do sistema em camadas lógicas (Dados, Negócios e Apresentação via `CaixaEletronicoUI`).
-    * Uso de Injeção de Dependência via construtores para compartilhamento seguro de instâncias.
+    * Uso de Injeção de Dependência via construtores para compartilhamento seguro de instâncias. 
+*   **UX e Formatação:** Limpeza de interface para simular um terminal real e uso da classe `NumberFormat` para a formatação e exibição de valores monetários no padrão regional (R$).
 ---
 
 ## 🚀 Como Executar o Projeto

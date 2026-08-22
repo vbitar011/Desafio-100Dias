@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Conta {
     //Definindo atributos
@@ -12,6 +14,8 @@ public class Conta {
     private String numeroDaConta;
     protected double saldo;
     protected List<String> extrato = new ArrayList<>();
+
+    protected NumberFormat formatador = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
     public Conta(String titular, String numeroDaConta, double saldo){
         //Iniciando os atributos definidos
@@ -26,9 +30,9 @@ public class Conta {
             throw new dia05.SaldoInsuficienteException("Erro no saque: Saldo insuficiente. Saldo atual: R$ " + this.saldo);
         } else {
             saldo = saldo - valor;
-            System.out.println("Saque de R$" + valor + " realizado com sucesso!");
+            System.out.println("Saque de " + formatador.format(valor) + " realizado com sucesso!");
             String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            extrato.add(dataHora + " - Saque: R$ " + valor);
+            extrato.add(dataHora + " - Saque: " + formatador.format(valor));
         }
     }
 
@@ -38,9 +42,9 @@ public class Conta {
            System.out.println("Valor Insuficiente! Tente novamente");
         } else{
             saldo = saldo + valor;
-            System.out.println( valor + " Depositado com sucesso!");
+            System.out.println( formatador.format(valor) + " Depositado com sucesso!");
             String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            extrato.add(dataHora + " - Depósito: R$ " + valor);
+            extrato.add(dataHora + " - Depósito: " + formatador.format(valor));
         }
     }
 
@@ -52,12 +56,12 @@ public class Conta {
         } else {
             extrato.forEach(movimento -> System.out.println(movimento));
         }
-        System.out.println("Saldo atual: R$ " +getSaldo());
+        System.out.println("Saldo atual: " + getSaldo());
     }
 
     //Exibição do saldo após operações
     public void exibirSaldo(){
-        System.out.println("Saldo atual após operação: " + saldo);
+        System.out.println("Saldo atual após operação: " + formatador.format(saldo));
     }
 
     //Getter para acessar o titular fora do arquivo
