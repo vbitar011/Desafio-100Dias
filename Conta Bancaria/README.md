@@ -24,7 +24,7 @@ O sistema conta com um menu interativo completo que permite:
     *   Visualização do Patrimônio Total do banco.
     *   Filtro de contas com maior saldo.
 *   **Persistência de Dados (DB):** Salvamento e carregamento automático de todas as contas e clientes utilizando um banco de dados relacional.
-
+*   **Transferências Bancárias:** Operação de transferência de valores entre contas (PIX/TED), garantindo a integridade dos saldos com validações de segurança (Exceptions) e sincronização simultânea no Banco de Dados SQLite.
 ---
 
 ## 🛠️ Tecnologias e Conceitos Aplicados

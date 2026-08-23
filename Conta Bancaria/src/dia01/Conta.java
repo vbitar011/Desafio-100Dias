@@ -56,7 +56,7 @@ public class Conta {
         } else {
             extrato.forEach(movimento -> System.out.println(movimento));
         }
-        System.out.println("Saldo atual: " + getSaldo());
+        System.out.println("Saldo atual: " + formatador.format(getSaldo()));
     }
 
     //Exibição do saldo após operações

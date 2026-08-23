@@ -5,6 +5,8 @@ import dia03.ContaCorrente;
 import dia04.Banco;
 import dia05.SaldoInsuficienteException;
 
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.List;
 
@@ -12,6 +14,9 @@ public class CaixaEletronicoUI {
 
     private Banco meuBanco;
     private Scanner teclado;
+    
+    protected NumberFormat formatador = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+
 
     public CaixaEletronicoUI(Banco banco, Scanner teclado){
         this.meuBanco = banco;
@@ -31,6 +36,7 @@ public class CaixaEletronicoUI {
             System.out.println("6 - Tirar Extrato");
             System.out.println("7 - Cobrar Impostos");
             System.out.println("8 - Encerrar Conta");
+            System.out.println("9 - Transferência");
             System.out.println("0 - Sair");
             opcao = dia16.TecladoUtil.lerInteiro(teclado, "Escolha uma opção: ");
 
@@ -107,7 +113,6 @@ public class CaixaEletronicoUI {
                         meuBanco.adicionarConta(novaCC);
                         dia12.ContaDAO.salvarConta(novaCC);
 
-                        meuBanco.adicionarConta(new dia03.ContaCorrente(nome, numero, saldoInicial));
 
                     } else if (tipo == 2) {
                         double taxa = dia16.TecladoUtil.lerDouble(teclado, "Taxa de Rendimento (ex.: 0,05 para5 %");
@@ -144,7 +149,7 @@ public class CaixaEletronicoUI {
                                 dia01.Conta c = (dia01.Conta) tributavel;
                                 try {
                                     c.sacar(imposto);
-                                    System.out.println("Imposto de R$ " + imposto + " cobrado da conta " + c.getNumeroDaConta());
+                                    System.out.println("Imposto de R$ " + formatador.format(imposto) + " cobrado da conta " + c.getNumeroDaConta());
                                 } catch (SaldoInsuficienteException e){
                                     System.out.println("Conta " + c.getNumeroDaConta() + "sem saldo para pagar imposto!");
                                 }
@@ -168,6 +173,40 @@ public class CaixaEletronicoUI {
                         }
                     } else {
                         System.out.println("Conta não encontrada!");
+                    }
+                    break;
+
+                case 9:
+                    System.out.println("\n--- ÁREA DE TRANSFERÊNCIA (PIX/TED) ---");
+
+                    System.out.print("Digite o número da SUA conta (Origem): ");
+                    String numOrigem = teclado.next();
+
+                    System.out.print("Digite o número da conta de destino: ");
+                    String numDestino = teclado.next();
+
+                    Conta contaOrigem = meuBanco.buscarContaPorNumero(numOrigem);
+                    Conta contaDestino = meuBanco.buscarContaPorNumero(numDestino);
+
+
+                    if (contaOrigem != null && contaDestino != null) {
+                        double valorTransferencia = dia16.TecladoUtil.lerDouble(teclado, "Digite o valor da transferência: R$ ");
+
+                        try {
+                            contaOrigem.sacar(valorTransferencia);
+                            contaDestino.depositar(valorTransferencia);
+
+                            dia12.ContaDAO.atualizarSaldo(contaOrigem);
+                            dia12.ContaDAO.atualizarSaldo(contaDestino);
+
+                            System.out.println("✅ Transferência de " + formatador.format(valorTransferencia) + " concluída com sucesso!");
+
+                        } catch (dia05.SaldoInsuficienteException e) {
+                            System.out.println("❌ Transferência cancelada: " + e.getMessage());
+                        }
+
+                    } else {
+                        System.out.println("❌ Erro: A conta de origem ou a conta de destino não foi encontrada no banco.");
                     }
                     break;
 
