@@ -4,6 +4,7 @@ import dia01.Conta;
 import dia02.ContaPoupanca;
 import dia03.ContaCorrente;
 import dia11.ConexaoDB;
+import dia20.TipoConta;
 
 import java.awt.desktop.SystemSleepEvent;
 import java.sql.Connection;
@@ -26,10 +27,18 @@ public class ContaDAO {
                 + "tipo TEXT NOT NULL"
                 + ");";
 
+        String sqlTransacoes = "CREATE TABLE IF NOT EXISTS transacoes ("
+                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "numero_conta TEXT NOT NULL, "
+                + "descricao TEXT NOT NULL, "
+                + "FOREIGN KEY (numero_conta) REFERENCES contas(numero)"
+                + ");";
+
         try (Connection conexao = ConexaoDB.conectar();
              Statement stmt = conexao.createStatement()){
 
             stmt.execute(sql);
+            stmt.execute(sqlTransacoes);
             System.out.println("✅ Tabela de contas pronta para uso!");
         } catch (SQLException e){
             System.out.println("❌ Erro  ao criar a tabela " + e.getMessage());
@@ -47,9 +56,9 @@ public class ContaDAO {
             pstmt.setDouble(3, conta.getSaldo());
 
             if (conta instanceof ContaPoupanca){
-                pstmt.setString(4, "POUPANCA");
+                pstmt.setString(4, TipoConta.POUPANCA.name());
             } else{
-                pstmt.setString(4, "CORRENTE");
+                pstmt.setString(4, TipoConta.CORRENTE.name());
             }
 
             pstmt.executeUpdate();
@@ -73,7 +82,7 @@ public class ContaDAO {
                 double saldo = rs.getDouble("saldo");
                 String tipo = rs.getString("tipo");
 
-                if (tipo.equals("POUPANCA")){
+                if (tipo.equals(TipoConta.POUPANCA.name())){
                     contasCarregadas.add(new ContaPoupanca(titular, titular, saldo, 0.05));
                 } else {
                     contasCarregadas.add(new ContaCorrente(titular, numero, saldo));
@@ -116,5 +125,39 @@ public class ContaDAO {
         } catch (SQLException e){
             System.out.println("❌ Erro ao excluir a conta: " + e.getMessage());
         }
+    }
+
+    public static void salvarTransacao(String numeroConta, String descricao){
+        String sql = "INSERT INTO transacoes (numero_conta, descricao) VALUES (?, ?)";
+
+        try (Connection conexao = ConexaoDB.conectar();
+        PreparedStatement pstmt = conexao.prepareStatement(sql)){
+
+            pstmt.setString(1, numeroConta);
+            pstmt.setString(2, descricao);
+            pstmt.executeUpdate();
+        }catch (SQLException e){
+            System.out.println("❌ Erro ao salvar transação: " + e.getMessage());
+        }
+    }
+
+    public static List<String> buscarExtrato(String numeroConta){
+        List<String> historico = new ArrayList<>();
+        String sql = "SELECT descricao FROM transacoes WHERE numero_conta = ?";
+
+        try (Connection conexao = dia11.ConexaoDB.conectar();
+             PreparedStatement pstmt = conexao.prepareStatement(sql)){
+
+            pstmt.setString(1, numeroConta);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()){
+                historico.add(rs.getString("descricao"));
+            }
+        } catch (SQLException e){
+            System.out.println("❌ Erro ao buscar extrato: " + e.getMessage());
+        }
+
+        return historico;
     }
 }

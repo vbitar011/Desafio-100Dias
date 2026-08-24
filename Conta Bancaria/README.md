@@ -49,6 +49,9 @@ Durante o desenvolvimento deste sistema, foram aplicados os seguintes conceitos 
     * Separação do sistema em camadas lógicas (Dados, Negócios e Apresentação via `CaixaEletronicoUI`).
     * Uso de Injeção de Dependência via construtores para compartilhamento seguro de instâncias. 
 *   **UX e Formatação:** Limpeza de interface para simular um terminal real e uso da classe `NumberFormat` para a formatação e exibição de valores monetários no padrão regional (R$).
+*   **Segurança e Tipagem:** Uso de `Enums` para controle rigoroso de categorias (ex: `TipoConta`), prevenindo erros de "Strings Mágicas".
+*   **Banco de Dados Relacional (SQLite):** Modelagem de dados com relacionamentos 1:N utilizando Chaves Estrangeiras (Foreign Keys) para vincular o histórico de transações às contas.
+*   **Persistência Avançada:** Leitura e gravação de histórico de movimentações (extrato) diretamente no disco.
 ---
 
 ## 🚀 Como Executar o Projeto
