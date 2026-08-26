@@ -26,6 +26,9 @@ O sistema conta com um menu interativo completo que permite:
 *   **Persistência de Dados (DB):** Salvamento e carregamento automático de todas as contas e clientes utilizando um banco de dados relacional.
 *   **Transferências Bancárias:** Operação de transferência de valores entre contas (PIX/TED), garantindo a integridade dos saldos com validações de segurança (Exceptions) e sincronização simultânea no Banco de Dados SQLite.
 *   **Sistema de Autenticação:** Implementação de senhas numéricas (4 a 6 dígitos) exigidas para operações financeiras (Saque, Transferência e Extrato), com validação via Expressões Regulares (Regex) e armazenamento em Banco de Dados SQLite.
+*   **Arquitetura de Software (Service Layer):** Criação da classe `CaixaEletronicoService` para atuar como a camada de serviço, separando completamente as regras de negócio da interface com o usuário.
+*   **Refatoração e Clean Code:** Aplicação da técnica *Extract Method* no menu principal para eliminar "Code Smells" (como o switch-case gigante e difícil de manter).
+*   **Boas Práticas (SOLID):** Adequação do sistema ao Princípio da Responsabilidade Única (SRP), garantindo que a classe UI apenas gerencie a exibição e a leitura de dados, enquanto o Serviço orquestra toda a lógica financeira.
 ---
 
 ## 🛠️ Tecnologias e Conceitos Aplicados
