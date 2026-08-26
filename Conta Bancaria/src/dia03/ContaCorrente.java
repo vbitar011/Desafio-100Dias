@@ -5,8 +5,8 @@ import dia09.Tributavel;
 
 public class ContaCorrente extends Conta implements Tributavel {
 
-    public ContaCorrente(String titular, String numeroDaConta, double saldo){
-        super(titular, numeroDaConta, saldo);
+    public ContaCorrente(String titular, String numeroDaConta, double saldo, String senha){
+        super(titular, numeroDaConta, saldo, senha);
     }
 
     @Override

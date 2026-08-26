@@ -24,7 +24,8 @@ public class ContaDAO {
                 + "numero TEXT PRIMARY KEY, "
                 + "titular TEXT NOT NULL, "
                 + "saldo REAL, "
-                + "tipo TEXT NOT NULL"
+                + "tipo TEXT NOT NULL, "
+                + "senha TEXT NOT NULL"
                 + ");";
 
         String sqlTransacoes = "CREATE TABLE IF NOT EXISTS transacoes ("
@@ -46,7 +47,7 @@ public class ContaDAO {
     }
 
     public static void salvarConta(Conta conta){
-        String sql = "INSERT INTO contas (numero, titular, saldo, tipo) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT OR REPLACE INTO contas (numero, titular, saldo, tipo, senha) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conexao = ConexaoDB.conectar();
              PreparedStatement pstmt = conexao.prepareStatement(sql)){
@@ -61,8 +62,11 @@ public class ContaDAO {
                 pstmt.setString(4, TipoConta.CORRENTE.name());
             }
 
+            pstmt.setString(5, conta.getSenha());
             pstmt.executeUpdate();
+
             System.out.println("✅ Conta " + conta.getNumeroDaConta() + " salva no Banco de Dados!");
+
         } catch (SQLException e){
             System.out.println("Erro ao salvar a conta: " + e.getMessage());
         }
@@ -81,11 +85,12 @@ public class ContaDAO {
                 String titular = rs.getString("titular");
                 double saldo = rs.getDouble("saldo");
                 String tipo = rs.getString("tipo");
+                String senhaSalva = rs.getString("senha");
 
                 if (tipo.equals(TipoConta.POUPANCA.name())){
-                    contasCarregadas.add(new ContaPoupanca(titular, titular, saldo, 0.05));
+                    contasCarregadas.add(new ContaPoupanca(titular, titular, saldo, 0.05, senhaSalva));
                 } else {
-                    contasCarregadas.add(new ContaCorrente(titular, numero, saldo));
+                    contasCarregadas.add(new ContaCorrente(titular, numero, saldo, senhaSalva));
                 }
             }
             System.out.println("✅ Dados carregados do Banco SQLite com sucesso!");

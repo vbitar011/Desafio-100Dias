@@ -5,8 +5,8 @@ import dia01.Conta;
 public class ContaPoupanca extends Conta {
     private double taxaRendimento;
 
-    public ContaPoupanca(String titular, String numeroDaConta, double saldo, double taxaRendimento){
-        super(titular, numeroDaConta, saldo);
+    public ContaPoupanca(String titular, String numeroDaConta, double saldo, double taxaRendimento, String senha){
+        super(titular, numeroDaConta, saldo, senha);
         this.taxaRendimento = taxaRendimento;
     }
 

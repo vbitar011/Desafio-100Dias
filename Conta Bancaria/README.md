@@ -25,6 +25,7 @@ O sistema conta com um menu interativo completo que permite:
     *   Filtro de contas com maior saldo.
 *   **Persistência de Dados (DB):** Salvamento e carregamento automático de todas as contas e clientes utilizando um banco de dados relacional.
 *   **Transferências Bancárias:** Operação de transferência de valores entre contas (PIX/TED), garantindo a integridade dos saldos com validações de segurança (Exceptions) e sincronização simultânea no Banco de Dados SQLite.
+*   **Sistema de Autenticação:** Implementação de senhas numéricas (4 a 6 dígitos) exigidas para operações financeiras (Saque, Transferência e Extrato), com validação via Expressões Regulares (Regex) e armazenamento em Banco de Dados SQLite.
 ---
 
 ## 🛠️ Tecnologias e Conceitos Aplicados

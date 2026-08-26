@@ -69,25 +69,36 @@ public class CaixaEletronicoUI {
                     }
                     break;
 
-                case 3:
-                    System.out.print("Digite o numero da conta: ");
-                    String numSaque = teclado.nextLine();
+                case 3: {
+                    System.out.println("\n--- REALIZAR SAQUE ---");
+                    System.out.print("Digite o número da conta: ");
+                    String numSaque = teclado.next();
 
-                    dia01.Conta contaSaque = meuBanco.buscarContaPorNumero(numSaque);
+                    Conta contaSaque = meuBanco.buscarContaPorNumero(numSaque);
 
-                    if (contaSaque != null){
-                        double valorSaque = dia16.TecladoUtil.lerDouble(teclado, "Digite o valor para saque: R$ ");
-                        try {
-                            contaSaque.sacar(valorSaque);
-                            System.out.println("Por favor, retire seu dinheiro na boca do caixa.");
-                            dia12.ContaDAO.atualizarSaldo(contaSaque);
-                        } catch (SaldoInsuficienteException e){
-                            System.out.println("Operação cancelada pelo banco: " + e.getMessage());
+                    if (contaSaque != null) {
+
+                        System.out.print("Digite sua senha de acesso: ");
+                        String senhaDigitada = teclado.next();
+
+                        if (contaSaque.autenticar(senhaDigitada)) {
+                            double valorSaque = dia16.TecladoUtil.lerDouble(teclado, "Digite o valor para saque: R$ ");
+                            try {
+                                contaSaque.sacar(valorSaque);
+                                dia12.ContaDAO.atualizarSaldo(contaSaque);
+                            } catch (dia05.SaldoInsuficienteException e) {
+                                System.out.println("❌ Erro: " + e.getMessage());
+                            }
+
+                        } else {
+                            System.out.println("❌ Acesso Negado: Senha incorreta. Operação cancelada!");
                         }
+
                     } else {
-                        System.out.println("Conta não Encontrada!");
+                        System.out.println("❌ Conta não encontrada!.");
                     }
                     break;
+                }
 
                 case 4:
                     meuBanco.exibirRelatorio();
@@ -106,10 +117,11 @@ public class CaixaEletronicoUI {
                     System.out.print("Número da Conta: ");
                     String numero = teclado.nextLine();
 
+                    String senhaCriada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Crie uma senha numérica (4 a 6 dígitos): ");
                     double saldoInicial = dia16.TecladoUtil.lerDouble(teclado, "Saldo inicial: R$ ");
 
                     if (tipo == 1){
-                        dia03.ContaCorrente novaCC = new ContaCorrente(nome, numero, saldoInicial);
+                        dia03.ContaCorrente novaCC = new ContaCorrente(nome, numero, saldoInicial, senhaCriada);
                         meuBanco.adicionarConta(novaCC);
                         dia12.ContaDAO.salvarConta(novaCC);
 
@@ -117,7 +129,7 @@ public class CaixaEletronicoUI {
                     } else if (tipo == 2) {
                         double taxa = dia16.TecladoUtil.lerDouble(teclado, "Taxa de Rendimento (ex.: 0,05 para5 %");
 
-                        dia02.ContaPoupanca novaCP = new dia02.ContaPoupanca(nome, numero, saldoInicial, taxa);
+                        dia02.ContaPoupanca novaCP = new dia02.ContaPoupanca(nome, numero, saldoInicial, taxa, senhaCriada);
                         meuBanco.adicionarConta(novaCP);
                         dia12.ContaDAO.salvarConta(novaCP);
 
@@ -126,18 +138,22 @@ public class CaixaEletronicoUI {
                     }
                     break;
 
-                case 6:
+                case 6: {
                     System.out.print("Digite o número da conta: ");
                     String numExtrato = teclado.nextLine();
 
                     dia01.Conta contaExtrato = meuBanco.buscarContaPorNumero(numExtrato);
 
-                    if(contaExtrato != null){
+                    String senhaDigitada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Digite a senha da conta: ");
+
+                    if (contaExtrato.autenticar(senhaDigitada)) {
                         contaExtrato.exibirExtrato();
+
                     } else {
-                        System.out.println("Conta não encontrada!");
+                        System.out.println("❌ Acesso Negado: Senha incorreta. Operação cancelada!");
                     }
                     break;
+                }
 
                 case 7:
                     System.out.println("\n--- COBRANÇA DE IMPOSTOS ---");
@@ -176,7 +192,7 @@ public class CaixaEletronicoUI {
                     }
                     break;
 
-                case 9:
+                case 9: {
                     System.out.println("\n--- ÁREA DE TRANSFERÊNCIA (PIX/TED) ---");
 
                     System.out.print("Digite o número da SUA conta (Origem): ");
@@ -188,27 +204,36 @@ public class CaixaEletronicoUI {
                     Conta contaOrigem = meuBanco.buscarContaPorNumero(numOrigem);
                     Conta contaDestino = meuBanco.buscarContaPorNumero(numDestino);
 
-
                     if (contaOrigem != null && contaDestino != null) {
-                        double valorTransferencia = dia16.TecladoUtil.lerDouble(teclado, "Digite o valor da transferência: R$ ");
 
-                        try {
-                            contaOrigem.sacar(valorTransferencia);
-                            contaDestino.depositar(valorTransferencia);
+                        String senhaDigitada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Digite a senha da sua conta (Origem): ");
 
-                            dia12.ContaDAO.atualizarSaldo(contaOrigem);
-                            dia12.ContaDAO.atualizarSaldo(contaDestino);
+                        if (contaOrigem.autenticar(senhaDigitada)) {
 
-                            System.out.println("✅ Transferência de " + formatador.format(valorTransferencia) + " concluída com sucesso!");
+                            double valorTransferencia = dia16.TecladoUtil.lerDouble(teclado, "Digite o valor da transferência: R$ ");
 
-                        } catch (dia05.SaldoInsuficienteException e) {
-                            System.out.println("❌ Transferência cancelada: " + e.getMessage());
+                            try {
+                                contaOrigem.sacar(valorTransferencia);
+                                contaDestino.depositar(valorTransferencia);
+
+                                dia12.ContaDAO.atualizarSaldo(contaOrigem);
+                                dia12.ContaDAO.atualizarSaldo(contaDestino);
+
+                                System.out.println("✅ Transferência concluída com sucesso!");
+
+                            } catch (dia05.SaldoInsuficienteException e) {
+                                System.out.println("❌ Transferência cancelada: " + e.getMessage());
+                            }
+
+                        } else {
+                            System.out.println("❌ Acesso Negado: Senha incorreta. Operação cancelada.");
                         }
 
                     } else {
                         System.out.println("❌ Erro: A conta de origem ou a conta de destino não foi encontrada no banco.");
                     }
                     break;
+                }
 
                     case 0:
                     System.out.println("Desligando o Caixa Eletrônico. Volte sempre!");

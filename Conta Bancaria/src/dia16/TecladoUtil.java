@@ -36,4 +36,18 @@ public class TecladoUtil {
             }
         }
     }
+
+    public static String lerSenhaNumerica(Scanner teclado, String mensagem) {
+        String senha;
+        while (true) {
+            System.out.print(mensagem);
+            senha = teclado.next();
+
+            //O '\\d{4,6}' é truque do Java que diz: "Apenas dígitos numéricos, de 4 até 6 vezes"
+            if (senha.matches("\\d{4,6}")) {
+                return senha;
+            }
+            System.out.println("❌ Erro: A senha deve conter APENAS NÚMEROS e ter entre 4 e 6 dígitos. Tente novamente.");
+        }
+    }
 }

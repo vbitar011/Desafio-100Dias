@@ -13,15 +13,17 @@ public class Conta {
     private String titular;
     private String numeroDaConta;
     protected double saldo;
+    protected String senha;
     protected List<String> extrato = new ArrayList<>();
 
     protected NumberFormat formatador = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
-    public Conta(String titular, String numeroDaConta, double saldo){
+    public Conta(String titular, String numeroDaConta, double saldo, String senha){
         //Iniciando os atributos definidos
         this.titular = titular;
         this.numeroDaConta = numeroDaConta;
         this.saldo = saldo;
+        this.senha = senha;
     }
 
     //Função para saque que irá verificar antes de executar.
@@ -80,4 +82,10 @@ public class Conta {
 
     //Getter para acessar o número da conta e permitir a busca pela conta no menu
     public String getNumeroDaConta(){ return numeroDaConta; }
+
+    public boolean autenticar(String senhaDigitada) {
+        return this.senha.equals(senhaDigitada);
+    }
+
+    public String getSenha(){ return senha; }
 }
