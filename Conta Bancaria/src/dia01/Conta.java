@@ -33,8 +33,7 @@ public class Conta {
         } else {
             saldo = saldo - valor;
             System.out.println("Saque de " + formatador.format(valor) + " realizado com sucesso!");
-            String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            String mensagem = dataHora + " - Saque: " + formatador.format(valor);
+            String mensagem = dataHoraFormatada() + " - Saque: " + formatador.format(valor);
             dia12.ContaDAO.salvarTransacao(this.numeroDaConta, mensagem);
         }
     }
@@ -42,14 +41,12 @@ public class Conta {
     //Função para depósito, que também verifica antes de executar
     public void depositar(double valor){
         if (valor <= 0) {
-           System.out.println("Valor Insuficiente! Tente novamente");
-        } else{
-            saldo = saldo + valor;
-            System.out.println( formatador.format(valor) + " Depositado com sucesso!");
-            String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-            String mensagem = dataHora + " - Depósito: " + formatador.format(valor);
-            dia12.ContaDAO.salvarTransacao(this.numeroDaConta, mensagem);
+            throw new IllegalArgumentException("Erro no depósito: Valor deve ser maior que zero.");
         }
+        saldo = saldo + valor;
+        System.out.println( formatador.format(valor) + " Depositado com sucesso!");
+        String mensagem = dataHoraFormatada() + " - Depósito: " + formatador.format(valor);
+        dia12.ContaDAO.salvarTransacao(this.numeroDaConta, mensagem);
     }
 
     //Método para exibição do extrato
@@ -88,4 +85,8 @@ public class Conta {
     }
 
     public String getSenha(){ return senha; }
+
+    private String dataHoraFormatada(){
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+    }
 }

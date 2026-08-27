@@ -56,6 +56,10 @@ Durante o desenvolvimento deste sistema, foram aplicados os seguintes conceitos 
 *   **Segurança e Tipagem:** Uso de `Enums` para controle rigoroso de categorias (ex: `TipoConta`), prevenindo erros de "Strings Mágicas".
 *   **Banco de Dados Relacional (SQLite):** Modelagem de dados com relacionamentos 1:N utilizando Chaves Estrangeiras (Foreign Keys) para vincular o histórico de transações às contas.
 *   **Persistência Avançada:** Leitura e gravação de histórico de movimentações (extrato) diretamente no disco.
+*   **Segurança de Memória:** Resolução de vulnerabilidade de recursão infinita (*StackOverflowError*) na rotina de formatação de datas transacionais.
+*   **Integridade de Banco de Dados:** Correção do mapeamento de atributos no `ContaDAO`, garantindo a reconstrução exata de objetos a partir do SQLite e evitando a corrupção cruzada de dados.
+*   **Tipagem Forte:** Restauração da validação de `Enum` (`TipoConta.valueOf`) na leitura de registros persistidos, blindando o sistema contra inconsistências de texto (*String*).
+*   **Design de Código (*Clean Code*):** Implementação de Cláusulas de Guarda (*Guard Clauses*) e adoção de lançamento de exceções ativas (`IllegalArgumentException`) na camada de Domínio, rejeitando operações financeiras inválidas sem uso de estruturas condicionais redundantes (`else`).
 ---
 
 ## 🚀 Como Executar o Projeto

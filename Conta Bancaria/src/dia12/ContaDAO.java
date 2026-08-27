@@ -87,8 +87,8 @@ public class ContaDAO {
                 String tipo = rs.getString("tipo");
                 String senhaSalva = rs.getString("senha");
 
-                if (tipo.equals(TipoConta.POUPANCA.name())){
-                    contasCarregadas.add(new ContaPoupanca(titular, titular, saldo, 0.05, senhaSalva));
+                if (TipoConta.valueOf(tipo) == TipoConta.POUPANCA){
+                    contasCarregadas.add(new ContaPoupanca(titular, numero, saldo, 0.05, senhaSalva));
                 } else {
                     contasCarregadas.add(new ContaCorrente(titular, numero, saldo, senhaSalva));
                 }
