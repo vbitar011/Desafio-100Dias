@@ -60,6 +60,10 @@ Durante o desenvolvimento deste sistema, foram aplicados os seguintes conceitos 
 *   **Integridade de Banco de Dados:** Correção do mapeamento de atributos no `ContaDAO`, garantindo a reconstrução exata de objetos a partir do SQLite e evitando a corrupção cruzada de dados.
 *   **Tipagem Forte:** Restauração da validação de `Enum` (`TipoConta.valueOf`) na leitura de registros persistidos, blindando o sistema contra inconsistências de texto (*String*).
 *   **Design de Código (*Clean Code*):** Implementação de Cláusulas de Guarda (*Guard Clauses*) e adoção de lançamento de exceções ativas (`IllegalArgumentException`) na camada de Domínio, rejeitando operações financeiras inválidas sem uso de estruturas condicionais redundantes (`else`).
+*   **Refatoração de Fluxo (Guard Clauses):** Reescrita completa dos métodos da Camada de Serviço (`exibirExtrato`, `consultarSaldo`, `encerrarConta`) aplicando *Guard Clauses*. Eliminação do *Arrow Anti-Pattern* (condicionais aninhadas profundas) para garantir uma leitura linear e aborto precoce de falhas.
+*   **Prevenção de Falhas Críticas:** Isolamento técnico contra `NullPointerException` ao validar a existência de objetos na RAM antes de invocar métodos de autenticação.
+*   **Segurança de Acesso:** Fechamento de brechas de domínio. Acesso a dados sensíveis (extrato, saldo) e operações destrutivas (exclusão de conta) agora exigem obrigatoriamente validação criptográfica (senha numérica com Regex).
+*   **Otimização de I/O:** Padronização do consumo de buffer de teclado (`Scanner.next()`) e realocação de inputs de senha para otimizar o processamento e a experiência do usuário, bloqueando interações desnecessárias em entidades nulas.
 ---
 
 ## 🚀 Como Executar o Projeto

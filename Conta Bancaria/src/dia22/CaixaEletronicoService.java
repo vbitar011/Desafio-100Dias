@@ -49,20 +49,28 @@ public class CaixaEletronicoService {
 
     public void consultarSaldo(){
         System.out.print("Digite o número da conta: ");
-        String numSaldo = teclado.nextLine();
+        String numSaldo = teclado.next();
 
         dia01.Conta contaSaldo = meuBanco.buscarContaPorNumero(numSaldo);
 
-        if(contaSaldo != null){
-            contaSaldo.exibirSaldo();
-        } else {
-            System.out.println("Conta não encontrada!");
+        if(contaSaldo == null) {
+            System.out.println("❌ Erro: Conta não encontrada!");
+            return;
         }
+
+        String senhaDigitada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Digite a senha da conta: ");
+
+        if (!contaSaldo.autenticar(senhaDigitada)){
+            System.out.println("❌ Acesso Negado: Senha incorreta.");
+            return;
+        }
+
+        contaSaldo.exibirSaldo();
     }
 
     public void realizarDeposito(){
         System.out.print("Digite o número da conta: ");
-        String numDeposito = teclado.nextLine();
+        String numDeposito = teclado.next();
 
         dia01.Conta contaDeposito = meuBanco.buscarContaPorNumero(numDeposito);
 
@@ -80,13 +88,13 @@ public class CaixaEletronicoService {
         System.out.println("1 - Conta Corrente");
         System.out.println("2 - Conta Poupança");
         int tipo = dia16.TecladoUtil.lerInteiro(teclado, "Escolha o tipo da conta: ");
-        teclado.nextLine(); //Limpar buffer do teclado
+        teclado.next(); //Limpar buffer do teclado
 
         System.out.print("Nome do Titular: ");
-        String nome = teclado.nextLine();
+        String nome = teclado.next();
 
         System.out.print("Número da Conta: ");
-        String numero = teclado.nextLine();
+        String numero = teclado.next();
 
         String senhaCriada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Crie uma senha numérica (4 a 6 dígitos): ");
         double saldoInicial = dia16.TecladoUtil.lerDouble(teclado, "Saldo inicial: R$ ");
@@ -111,18 +119,23 @@ public class CaixaEletronicoService {
 
     public void exibirExtrato(){
         System.out.print("Digite o número da conta: ");
-        String numExtrato = teclado.nextLine();
+        String numExtrato = teclado.next();
 
         dia01.Conta contaExtrato = meuBanco.buscarContaPorNumero(numExtrato);
 
+        if (contaExtrato == null){
+            System.out.println("❌ Erro: Conta não encontrada!");
+            return;
+        }
+
         String senhaDigitada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Digite a senha da conta: ");
 
-        if (contaExtrato.autenticar(senhaDigitada)) {
-            contaExtrato.exibirExtrato();
-
-        } else {
-            System.out.println("❌ Acesso Negado: Senha incorreta. Operação cancelada!");
+        if (!contaExtrato.autenticar(senhaDigitada)) {
+            System.out.println("❌ Acesso Negado: Senha incorreta.");
+            return;
         }
+
+        contaExtrato.exibirExtrato();
     }
 
     public void realizarTransferencia(){
@@ -170,21 +183,27 @@ public class CaixaEletronicoService {
     public void encerrarConta(){
         System.out.print("Digite o número da conta que deseja ENCERRAR: ");
         String numEncerramento = teclado.next();
-
         Conta contaParaEncerrar = meuBanco.buscarContaPorNumero(numEncerramento);
 
-        if (contaParaEncerrar != null){ //Tenta achar a conta
-            if (contaParaEncerrar.getSaldo() == 00){ //Verifica se o saldo está zerado para ser encerrada
-                meuBanco.removerConta(contaParaEncerrar);//remove da RAM
-                dia12.ContaDAO.deletarConta(numEncerramento);//Remove do banco de dados
-                System.out.println("Conta encerrada definitivamente.");
-            } else {
-                System.out.println("⚠️ NEGADO: A conta possui saldo de R$ " + contaParaEncerrar.getSaldo() + ".");
-                System.out.println("Você precisa sacar ou transferir todo o dinheiro antes de encerrar.");
-            }
-        } else {
-            System.out.println("Conta não encontrada!");
+        if (contaParaEncerrar == null) {
+            System.out.println("❌ Erro: Conta não encontrada!");
+            return;
         }
+
+        if (contaParaEncerrar.getSaldo() > 0) {
+            System.out.println("⚠️ NEGADO: A conta possui saldo de R$ " + contaParaEncerrar.getSaldo() + ".");
+            return;
+        }
+
+        String senhaDigitada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Digite a senha da conta: ");
+        if (!contaParaEncerrar.autenticar(senhaDigitada)) {
+            System.out.println("❌ Acesso Negado: Senha incorreta.");
+            return;
+        }
+
+        meuBanco.removerConta(contaParaEncerrar);
+        dia12.ContaDAO.deletarConta(numEncerramento);
+        System.out.println("✅ Conta encerrada definitivamente.");
     }
 
     public void cobrarImpostos(){
@@ -197,6 +216,7 @@ public class CaixaEletronicoService {
                     dia01.Conta c = (dia01.Conta) tributavel;
                     try {
                         c.sacar(imposto);
+                        dia12.ContaDAO.atualizarSaldo(c);
                         System.out.println("Imposto de R$ " + formatador.format(imposto) + " cobrado da conta " + c.getNumeroDaConta());
                     } catch (SaldoInsuficienteException e){
                         System.out.println("Conta " + c.getNumeroDaConta() + "sem saldo para pagar imposto!");

@@ -64,10 +64,10 @@ public class CaixaEletronicoUI {
                     servico.criarNovaConta();
                     break;
 
-                case 6: {
+                case 6:
                     servico.exibirExtrato();
                     break;
-                }
+
 
                 case 7:
                     servico.cobrarImpostos();
@@ -77,13 +77,13 @@ public class CaixaEletronicoUI {
                     servico.encerrarConta();
                     break;
 
-                case 9: {
+                case 9:
                     servico.realizarTransferencia();
                     break;
-                }
+
 
                     case 0:
-                    System.out.println("Desligando o Caixa Eletrônico. Volte sempre!");
+                        System.out.println("Desligando o Caixa Eletrônico. Volte sempre!");
                     break;
 
                 default:
