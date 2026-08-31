@@ -138,45 +138,77 @@ public class CaixaEletronicoService {
         contaExtrato.exibirExtrato();
     }
 
-    public void realizarTransferencia(){
+    public void realizarTransferencia() {
         System.out.println("\n--- ÁREA DE TRANSFERÊNCIA (PIX/TED) ---");
 
+        //1. Valida origem e senha primeiro
         System.out.print("Digite o número da SUA conta (Origem): ");
         String numOrigem = teclado.next();
-
-        System.out.print("Digite o número da conta de destino: ");
-        String numDestino = teclado.next();
-
         Conta contaOrigem = meuBanco.buscarContaPorNumero(numOrigem);
-        Conta contaDestino = meuBanco.buscarContaPorNumero(numDestino);
 
-        if (contaOrigem != null && contaDestino != null) {
+        if (contaOrigem == null) {
+            System.out.println("❌ Erro: Conta de origem não encontrada no banco.");
+            return; //Aborta se a origem não existir
+        }
 
-            String senhaDigitada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Digite a senha da sua conta (Origem): ");
+        String senhaDigitada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Digite a senha da sua conta (Origem): ");
+        if (!contaOrigem.autenticar(senhaDigitada)) {
+            System.out.println("❌ Acesso Negado: Senha incorreta. Operação cancelada.");
+            return; //Aborta se a senha estiver errada
+        }
 
-            if (contaOrigem.autenticar(senhaDigitada)) {
+        //Verifica o tipo de transferência
+        System.out.println("1 - Por Número da Conta");
+        System.out.println("2 - Por Chave PIX");
+        int tipo = dia16.TecladoUtil.lerInteiro(teclado, "Escolha qual tipo de transferência irá realizar: ");
 
-                double valorTransferencia = dia16.TecladoUtil.lerDouble(teclado, "Digite o valor da transferência: R$ ");
+        //2. Declara a variável alvo FORA dos blocos de decisão
+        Conta contaDestino = null;
 
-                try {
-                    contaOrigem.sacar(valorTransferencia);
-                    contaDestino.depositar(valorTransferencia);
+        //3. Descobrir o destino
+        if (tipo == 1) {
+            System.out.print("Digite o número da conta de destino: ");
+            String numeroDigitado = teclado.next();
+            contaDestino = meuBanco.buscarContaPorNumero(numeroDigitado);
 
-                    dia12.ContaDAO.atualizarSaldo(contaOrigem);
-                    dia12.ContaDAO.atualizarSaldo(contaDestino);
+        } else if (tipo == 2) {
+            System.out.print("Digite a Chave PIX: ");
+            String chaveDigitada = teclado.next();
+            String numeroContaPix = dia12.ContaDAO.buscarNumeroContaPorChavePix(chaveDigitada);
 
-                    System.out.println("✅ Transferência concluída com sucesso!");
-
-                } catch (dia05.SaldoInsuficienteException e) {
-                    System.out.println("❌ Transferência cancelada: " + e.getMessage());
-                }
-
-            } else {
-                System.out.println("❌ Acesso Negado: Senha incorreta. Operação cancelada.");
+            if (numeroContaPix == null) {
+                System.out.println("❌ Erro: Chave PIX não encontrada.");
+                return; //Aborta se a chave PIX não existir no banco
             }
+            contaDestino = meuBanco.buscarContaPorNumero(numeroContaPix);
 
         } else {
-            System.out.println("❌ Erro: A conta de origem ou a conta de destino não foi encontrada no banco.");
+            System.out.println("❌ Opção inválida.");
+            return; //Aborta se o usuário digitar 3, 4, etc.
+        }
+
+        //4. Barreira de segurança unificada
+        if (contaDestino == null) {
+            System.out.println("❌ Erro: Conta de destino não encontrada.");
+            return; //Última barreira antes do caminho feliz
+        }
+
+        //5. Execução única da transferência
+        double valorTransferencia = dia16.TecladoUtil.lerDouble(teclado, "Digite o valor da transferência: R$ ");
+
+        try {
+            //Realiza as operações financeiras
+            contaOrigem.sacar(valorTransferencia);
+            contaDestino.depositar(valorTransferencia);
+
+            //Salva no banco de dados (DAO)
+            dia12.ContaDAO.atualizarSaldo(contaOrigem);
+            dia12.ContaDAO.atualizarSaldo(contaDestino);
+
+            System.out.println("✅ Transferência concluída com sucesso!");
+
+        } catch (dia05.SaldoInsuficienteException e) {
+            System.out.println("❌ Transferência cancelada: " + e.getMessage());
         }
     }
 

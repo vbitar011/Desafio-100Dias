@@ -35,11 +35,19 @@ public class ContaDAO {
                 + "FOREIGN KEY (numero_conta) REFERENCES contas(numero)"
                 + ");";
 
+        String sqlPix = "CREATE TABLE IF NOT EXISTS chaves_pix ("
+                + "chave PRIMARY KEY, "
+                + "tipo TEXT NOT NULL, "
+                + "numero_conta TEXT NOT NULL, "
+                + "FOREIGN KEY (numero_conta) REFERENCES contas(numero)"
+                + ");";
+
         try (Connection conexao = ConexaoDB.conectar();
              Statement stmt = conexao.createStatement()){
 
             stmt.execute(sql);
             stmt.execute(sqlTransacoes);
+            stmt.execute(sqlPix);
             System.out.println("✅ Tabela de contas pronta para uso!");
         } catch (SQLException e){
             System.out.println("❌ Erro  ao criar a tabela " + e.getMessage());
@@ -164,5 +172,44 @@ public class ContaDAO {
         }
 
         return historico;
+    }
+
+    public static void salvarChavePix(String chave, String tipo, String numeroConta){
+        String sql = "INSERT OR REPLACE INTO chaves_pix (chave, tipo, numero_conta) VALUES (?, ?, ?)";
+
+        try (Connection conexao = ConexaoDB.conectar();
+             PreparedStatement pstmt = conexao.prepareStatement(sql)){
+
+            pstmt.setString(1, chave);
+            pstmt.setString(2, tipo);
+            pstmt.setString(3, numeroConta);
+
+            pstmt.executeUpdate();
+
+            System.out.println("✅ Chave Pix " + tipo + " salva no Banco de Dados!");
+
+        } catch (SQLException e){
+            System.out.println("❌ Erro ao salvar a chave Pix: " + e.getMessage());
+        }
+    }
+
+    public static String buscarNumeroContaPorChavePix(String chavePix){
+        String sql = "SELECT numero_conta FROM chaves_pix WHERE chave = ?";
+
+        try (Connection conexao = dia11.ConexaoDB.conectar();
+             PreparedStatement pstmt = conexao.prepareStatement(sql)) {
+
+            pstmt.setString(1, chavePix);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("numero_conta");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Erro ao buscar chave PIX no banco: " + e.getMessage());
+        }
+
+        return null;
     }
 }

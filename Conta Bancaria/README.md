@@ -64,6 +64,10 @@ Durante o desenvolvimento deste sistema, foram aplicados os seguintes conceitos 
 *   **Prevenção de Falhas Críticas:** Isolamento técnico contra `NullPointerException` ao validar a existência de objetos na RAM antes de invocar métodos de autenticação.
 *   **Segurança de Acesso:** Fechamento de brechas de domínio. Acesso a dados sensíveis (extrato, saldo) e operações destrutivas (exclusão de conta) agora exigem obrigatoriamente validação criptográfica (senha numérica com Regex).
 *   **Otimização de I/O:** Padronização do consumo de buffer de teclado (`Scanner.next()`) e realocação de inputs de senha para otimizar o processamento e a experiência do usuário, bloqueando interações desnecessárias em entidades nulas.
+*   **Modelagem de Banco de Dados (1:N):** Criação da tabela `chaves_pix` no SQLite, implementando cardinalidade de Um-para-Muitos com `FOREIGN KEY` referenciando a tabela de contas e `PRIMARY KEY` na chave para garantir exclusividade e prevenção de colisão de dados.
+*   **Data Access Object (DAO):** Implementação de queries SQL limpas (`INSERT` e `SELECT` com junção lógica) para salvar e rastrear chaves PIX, tratando erros específicos de infraestrutura (`SQLException`).
+*   **Padrão de Design DRY:** Refatoração crítica do método de transferência (`CaixaEletronicoService`), separando a lógica de roteamento (identificação por Conta vs. PIX) da lógica de execução transacional, eliminando duplicação de código e reduzindo a complexidade ciclomática.
+*   **Gerenciamento de Escopo:** Correção de alocação de variáveis na memória (escopo de bloco) para garantir o fluxo seguro de dados entre as validações de segurança e as operações financeiras.
 ---
 
 ## 🚀 Como Executar o Projeto
