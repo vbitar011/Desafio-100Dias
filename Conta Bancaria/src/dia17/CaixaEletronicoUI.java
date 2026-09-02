@@ -40,6 +40,7 @@ public class CaixaEletronicoUI {
             System.out.println("7 - Cobrar Impostos");
             System.out.println("8 - Encerrar Conta");
             System.out.println("9 - Transferência");
+            System.out.println("10 - Cadastrar Chave PIX");
             System.out.println("0 - Sair");
             opcao = dia16.TecladoUtil.lerInteiro(teclado, "Escolha uma opção: ");
 
@@ -81,6 +82,9 @@ public class CaixaEletronicoUI {
                     servico.realizarTransferencia();
                     break;
 
+                case 10:
+                    servico.cadastrarChavePix();
+                    break;
 
                     case 0:
                         System.out.println("Desligando o Caixa Eletrônico. Volte sempre!");

@@ -29,6 +29,9 @@ O sistema conta com um menu interativo completo que permite:
 *   **Arquitetura de Software (Service Layer):** Criação da classe `CaixaEletronicoService` para atuar como a camada de serviço, separando completamente as regras de negócio da interface com o usuário.
 *   **Refatoração e Clean Code:** Aplicação da técnica *Extract Method* no menu principal para eliminar "Code Smells" (como o switch-case gigante e difícil de manter).
 *   **Boas Práticas (SOLID):** Adequação do sistema ao Princípio da Responsabilidade Única (SRP), garantindo que a classe UI apenas gerencie a exibição e a leitura de dados, enquanto o Serviço orquestra toda a lógica financeira.
+*   **Desenvolvimento End-to-End:** Conclusão do ciclo de vida relacional do PIX (1:N) com a implementação do fluxo de cadastro na camada de Serviço.
+*   **Blindagem de Fluxo (Fail-Fast):** Aplicação rigorosa de *Guard Clauses* para validar autenticação de usuário e integridade de opções de menu antes de permitir transações de gravação no banco de dados.
+*   **Clean Architecture:** Otimização do tratamento de exceções mediante a remoção de blocos `try/catch` redundantes no Service Layer, delegando a responsabilidade de falhas de infraestrutura exclusivamente ao Data Access Object (DAO).
 ---
 
 ## 🛠️ Tecnologias e Conceitos Aplicados

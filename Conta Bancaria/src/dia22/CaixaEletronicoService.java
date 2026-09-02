@@ -255,4 +255,50 @@ public class CaixaEletronicoService {
                     }
                 });
     }
+
+    public void cadastrarChavePix() {
+        System.out.println("\n--- CADASTRO DE CHAVE PIX ---");
+
+        //A Segurança (Cláusulas de Guarda)
+        System.out.print("Digite o número da sua conta: ");
+        String numeroDaConta = teclado.next();
+        Conta conta = meuBanco.buscarContaPorNumero(numeroDaConta);
+
+        if (conta == null) {
+            System.out.println("❌ Erro: Conta não encontrada.");
+            return; //Aborta se a conta não existir
+        }
+
+        String senhaDigitada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Digite a sua senha: ");
+        if (!conta.autenticar(senhaDigitada)) {
+            System.out.println("❌ Acesso Negado: Senha incorreta. Operação cancelada.");
+            return; //Aborta se a senha estiver errada
+        }
+
+        //Escolhe o tipo da chave
+        System.out.println("\nEscolha o tipo de chave que deseja cadastrar:");
+        System.out.println("1 - CPF");
+        System.out.println("2 - E-mail");
+        System.out.println("3 - Telefone");
+        int opcaoTipo = dia16.TecladoUtil.lerInteiro(teclado, "Opção: ");
+
+        String tipoEscolhido = "";
+        if (opcaoTipo == 1) {
+            tipoEscolhido = "CPF";
+        } else if (opcaoTipo == 2) {
+            tipoEscolhido = "E-mail";
+        } else if (opcaoTipo == 3) {
+            tipoEscolhido = "Telefone";
+        } else {
+            System.out.println("❌ Opção de tipo de chave inválida.");
+            return; //Cláusula de guarda extra para garantir que o tipo seja válido
+        }
+
+        //O Input
+        System.out.print("Digite a chave " + tipoEscolhido + " que deseja cadastrar: ");
+        String chaveDigitada = teclado.next();
+
+        //Consolidação do cadastro
+        dia12.ContaDAO.salvarChavePix(chaveDigitada, tipoEscolhido, numeroDaConta);
+    }
 }
