@@ -71,6 +71,8 @@ Durante o desenvolvimento deste sistema, foram aplicados os seguintes conceitos 
 *   **Data Access Object (DAO):** Implementação de queries SQL limpas (`INSERT` e `SELECT` com junção lógica) para salvar e rastrear chaves PIX, tratando erros específicos de infraestrutura (`SQLException`).
 *   **Padrão de Design DRY:** Refatoração crítica do método de transferência (`CaixaEletronicoService`), separando a lógica de roteamento (identificação por Conta vs. PIX) da lógica de execução transacional, eliminando duplicação de código e reduzindo a complexidade ciclomática.
 *   **Gerenciamento de Escopo:** Correção de alocação de variáveis na memória (escopo de bloco) para garantir o fluxo seguro de dados entre as validações de segurança e as operações financeiras.
+*   **Validação de Constraints (Database):** Execução de testes de estresse focados em violação de integridade. Confirmação do bloqueio de sobreposição de dados via restrição `PRIMARY KEY` no SQLite, garantindo a exclusividade das chaves PIX.
+*   **Tratamento de Exceções Amigável (UX):** Interceptação de erros de infraestrutura (`SQLException` por quebra de constraint) no Data Access Object (DAO) e mascaramento para mensagens de feedback em linguagem de negócios.
 ---
 
 ## 🚀 Como Executar o Projeto

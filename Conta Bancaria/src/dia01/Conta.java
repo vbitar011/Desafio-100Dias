@@ -15,6 +15,7 @@ public class Conta {
     protected double saldo;
     protected String senha;
     protected List<String> extrato = new ArrayList<>();
+    protected List<String> chavesPix = new ArrayList<>();
 
     protected NumberFormat formatador = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 

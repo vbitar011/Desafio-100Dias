@@ -175,7 +175,7 @@ public class ContaDAO {
     }
 
     public static void salvarChavePix(String chave, String tipo, String numeroConta){
-        String sql = "INSERT OR REPLACE INTO chaves_pix (chave, tipo, numero_conta) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO chaves_pix (chave, tipo, numero_conta) VALUES (?, ?, ?)";
 
         try (Connection conexao = ConexaoDB.conectar();
              PreparedStatement pstmt = conexao.prepareStatement(sql)){
@@ -188,8 +188,12 @@ public class ContaDAO {
 
             System.out.println("✅ Chave Pix " + tipo + " salva no Banco de Dados!");
 
-        } catch (SQLException e){
-            System.out.println("❌ Erro ao salvar a chave Pix: " + e.getMessage());
+        } catch (SQLException e) {
+            if (e.getMessage().contains("UNIQUE constraint failed")) {
+                System.out.println("❌ Erro: Esta chave PIX já pertence a outra conta.");
+            } else {
+                System.out.println("❌ Erro interno no banco de dados. Tente novamente.");
+            }
         }
     }
 
