@@ -55,7 +55,7 @@ public class ContaDAO {
     }
 
     public static void salvarConta(Conta conta){
-        String sql = "INSERT OR REPLACE INTO contas (numero, titular, saldo, tipo, senha) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO contas (numero, titular, saldo, tipo, senha) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conexao = ConexaoDB.conectar();
              PreparedStatement pstmt = conexao.prepareStatement(sql)){
@@ -75,8 +75,12 @@ public class ContaDAO {
 
             System.out.println("✅ Conta " + conta.getNumeroDaConta() + " salva no Banco de Dados!");
 
-        } catch (SQLException e){
-            System.out.println("Erro ao salvar a conta: " + e.getMessage());
+        } catch (SQLException e) {
+            if (e.getMessage().contains("UNIQUE constraint failed")) {
+                System.out.println("❌ Erro: Este número de conta já está em uso.");
+            } else {
+                System.out.println("❌ Erro interno no banco de dados. Tente novamente.");
+            }
         }
     }
 
@@ -101,7 +105,7 @@ public class ContaDAO {
                     contasCarregadas.add(new ContaCorrente(titular, numero, saldo, senhaSalva));
                 }
             }
-            System.out.println("✅ Dados carregados do Banco SQLite com sucesso!");
+            //System.out.println("✅ Dados carregados do Banco SQLite com sucesso!");
         } catch (SQLException e){
             System.out.println("❌ Erro ao buscar contas no banco: " + e.getMessage());
         }
@@ -119,7 +123,7 @@ public class ContaDAO {
             pstmt.setString(2, conta.getNumeroDaConta());
             pstmt.executeUpdate();
 
-            System.out.println("✅ Saldo sincronizado com o Banco de Dados SQLite!");
+            //System.out.println("✅ Saldo sincronizado com o Banco de Dados SQLite!");
         } catch (SQLException e) {
             System.out.println("❌ Erro ao atualizar o saldo no banco: " + e.getMessage());
         }
@@ -149,6 +153,7 @@ public class ContaDAO {
             pstmt.setString(1, numeroConta);
             pstmt.setString(2, descricao);
             pstmt.executeUpdate();
+
         }catch (SQLException e){
             System.out.println("❌ Erro ao salvar transação: " + e.getMessage());
         }

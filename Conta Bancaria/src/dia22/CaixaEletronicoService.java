@@ -23,8 +23,7 @@ public class CaixaEletronicoService {
 
     public void realizarSaque() {
         System.out.println("\n--- REALIZAR SAQUE ---");
-        System.out.print("Digite o número da conta: ");
-        String numSaque = teclado.next();
+        String numSaque = dia16.TecladoUtil.lerNumeroConta(teclado, "Digite o número da conta: ");
 
         Conta contaSaque = meuBanco.buscarContaPorNumero(numSaque);
 
@@ -48,8 +47,7 @@ public class CaixaEletronicoService {
     }
 
     public void consultarSaldo(){
-        System.out.print("Digite o número da conta: ");
-        String numSaldo = teclado.next();
+        String numSaldo = dia16.TecladoUtil.lerNumeroConta(teclado, "Digite o número da conta: ");
 
         dia01.Conta contaSaldo = meuBanco.buscarContaPorNumero(numSaldo);
 
@@ -69,8 +67,7 @@ public class CaixaEletronicoService {
     }
 
     public void realizarDeposito(){
-        System.out.print("Digite o número da conta: ");
-        String numDeposito = teclado.next();
+        String numDeposito = dia16.TecladoUtil.lerNumeroConta(teclado, "Digite o número da conta: ");
 
         dia01.Conta contaDeposito = meuBanco.buscarContaPorNumero(numDeposito);
 
@@ -88,38 +85,32 @@ public class CaixaEletronicoService {
         System.out.println("1 - Conta Corrente");
         System.out.println("2 - Conta Poupança");
         int tipo = dia16.TecladoUtil.lerInteiro(teclado, "Escolha o tipo da conta: ");
-        teclado.next(); //Limpar buffer do teclado
 
-        System.out.print("Nome do Titular: ");
-        String nome = teclado.next();
+        if (tipo != 1 && tipo != 2) {
+            System.out.println("❌ Tipo inválido! Operação cancelada.");
+            return;
+        }
 
-        System.out.print("Número da Conta: ");
-        String numero = teclado.next();
-
+        String nome = dia16.TecladoUtil.lerNomeTitular(teclado, "Nome do Titular: ");
+        String numero = dia16.TecladoUtil.lerNumeroConta(teclado, "Número da Conta: ");
         String senhaCriada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Crie uma senha numérica (4 a 6 dígitos): ");
         double saldoInicial = dia16.TecladoUtil.lerDouble(teclado, "Saldo inicial: R$ ");
 
-        if (tipo == 1){
-            dia03.ContaCorrente novaCC = new ContaCorrente(nome, numero, saldoInicial, senhaCriada);
+        if (tipo == 1) {
+            dia03.ContaCorrente novaCC = new dia03.ContaCorrente(nome, numero, saldoInicial, senhaCriada);
             meuBanco.adicionarConta(novaCC);
             dia12.ContaDAO.salvarConta(novaCC);
 
-
-        } else if (tipo == 2) {
-            double taxa = dia16.TecladoUtil.lerDouble(teclado, "Taxa de Rendimento (ex.: 0,05 para5 %");
-
+        } else {
+            double taxa = dia16.TecladoUtil.lerDouble(teclado, "Taxa de Rendimento (ex.: 0.05 para 5%): ");
             dia02.ContaPoupanca novaCP = new dia02.ContaPoupanca(nome, numero, saldoInicial, taxa, senhaCriada);
             meuBanco.adicionarConta(novaCP);
             dia12.ContaDAO.salvarConta(novaCP);
-
-        } else {
-            System.out.println("Tipo Inválido! Conta não criada.");
         }
     }
 
     public void exibirExtrato(){
-        System.out.print("Digite o número da conta: ");
-        String numExtrato = teclado.next();
+        String numExtrato = dia16.TecladoUtil.lerNumeroConta(teclado, "Digite o número da conta: ");
 
         dia01.Conta contaExtrato = meuBanco.buscarContaPorNumero(numExtrato);
 
@@ -142,8 +133,7 @@ public class CaixaEletronicoService {
         System.out.println("\n--- ÁREA DE TRANSFERÊNCIA (PIX/TED) ---");
 
         //1. Valida origem e senha primeiro
-        System.out.print("Digite o número da SUA conta (Origem): ");
-        String numOrigem = teclado.next();
+        String numOrigem = dia16.TecladoUtil.lerNumeroConta(teclado, "Digite o número da SUA conta (Origem): ");
         Conta contaOrigem = meuBanco.buscarContaPorNumero(numOrigem);
 
         if (contaOrigem == null) {
@@ -152,6 +142,7 @@ public class CaixaEletronicoService {
         }
 
         String senhaDigitada = dia16.TecladoUtil.lerSenhaNumerica(teclado, "Digite a senha da sua conta (Origem): ");
+
         if (!contaOrigem.autenticar(senhaDigitada)) {
             System.out.println("❌ Acesso Negado: Senha incorreta. Operação cancelada.");
             return; //Aborta se a senha estiver errada
@@ -167,13 +158,12 @@ public class CaixaEletronicoService {
 
         //3. Descobrir o destino
         if (tipo == 1) {
-            System.out.print("Digite o número da conta de destino: ");
-            String numeroDigitado = teclado.next();
+            String numeroDigitado = dia16.TecladoUtil.lerNumeroConta(teclado, "Digite o número da conta de destino (XXXXX-X): ");
             contaDestino = meuBanco.buscarContaPorNumero(numeroDigitado);
 
         } else if (tipo == 2) {
             System.out.print("Digite a Chave PIX: ");
-            String chaveDigitada = teclado.next();
+            String chaveDigitada = teclado.nextLine().trim();
             String numeroContaPix = dia12.ContaDAO.buscarNumeroContaPorChavePix(chaveDigitada);
 
             if (numeroContaPix == null) {
@@ -213,8 +203,7 @@ public class CaixaEletronicoService {
     }
 
     public void encerrarConta(){
-        System.out.print("Digite o número da conta que deseja ENCERRAR: ");
-        String numEncerramento = teclado.next();
+        String numEncerramento = dia16.TecladoUtil.lerNumeroConta(teclado, "Digite o número da conta que deseja ENCERRAR: ");
         Conta contaParaEncerrar = meuBanco.buscarContaPorNumero(numEncerramento);
 
         if (contaParaEncerrar == null) {
@@ -260,8 +249,7 @@ public class CaixaEletronicoService {
         System.out.println("\n--- CADASTRO DE CHAVE PIX ---");
 
         //A Segurança (Cláusulas de Guarda)
-        System.out.print("Digite o número da sua conta: ");
-        String numeroDaConta = teclado.next();
+        String numeroDaConta = dia16.TecladoUtil.lerNumeroConta(teclado, "Digite o número da sua conta: ");
         Conta conta = meuBanco.buscarContaPorNumero(numeroDaConta);
 
         if (conta == null) {
@@ -296,7 +284,7 @@ public class CaixaEletronicoService {
 
         //O Input
         System.out.print("Digite a chave " + tipoEscolhido + " que deseja cadastrar: ");
-        String chaveDigitada = teclado.next();
+        String chaveDigitada = teclado.nextLine().trim();
 
         //Consolidação do cadastro
         dia12.ContaDAO.salvarChavePix(chaveDigitada, tipoEscolhido, numeroDaConta);

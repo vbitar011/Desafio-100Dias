@@ -32,6 +32,8 @@ O sistema conta com um menu interativo completo que permite:
 *   **Desenvolvimento End-to-End:** Conclusão do ciclo de vida relacional do PIX (1:N) com a implementação do fluxo de cadastro na camada de Serviço.
 *   **Blindagem de Fluxo (Fail-Fast):** Aplicação rigorosa de *Guard Clauses* para validar autenticação de usuário e integridade de opções de menu antes de permitir transações de gravação no banco de dados.
 *   **Clean Architecture:** Otimização do tratamento de exceções mediante a remoção de blocos `try/catch` redundantes no Service Layer, delegando a responsabilidade de falhas de infraestrutura exclusivamente ao Data Access Object (DAO).
+*   **Gestão de Memória (Scanner):** Correção de vazamentos de input e falhas de quebra de string, substituindo leituras frágeis (`teclado.next()`) por capturas de linha seguras (`nextLine().trim()`). Isso permite o processamento de entradas compostas (ex: nomes com espaço) sem corromper o buffer do terminal.
+*   **Monolito Seguro:** Fechamento do escopo de desenvolvimento lógico. O sistema está 100% protegido contra injeção de dados inválidos via console e inconsistências de banco de dados.
 ---
 
 ## 🛠️ Tecnologias e Conceitos Aplicados

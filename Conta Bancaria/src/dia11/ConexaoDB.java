@@ -14,7 +14,7 @@ public class ConexaoDB {
 
         try {
             conexao = DriverManager.getConnection(url);
-            System.out.println("✅ Conexão com o Banco de Dados estabelecida com sucesso!");
+            //System.out.println("✅ Conexão com o Banco de Dados estabelecida com sucesso!");
         } catch (SQLException e){
             System.out.println("❌ Erro ao conectar como Banco de Dados " + e.getMessage());
         }

@@ -50,4 +50,33 @@ public class TecladoUtil {
             System.out.println("❌ Erro: A senha deve conter APENAS NÚMEROS e ter entre 4 e 6 dígitos. Tente novamente.");
         }
     }
+
+    public static String lerNomeTitular(Scanner teclado, String mensagem) {
+        String nome;
+        while (true) {
+            System.out.print(mensagem);
+            nome = teclado.nextLine().trim();
+
+            //Permite apenas letras (incluindo acentos) e espaços. Exige no mínimo 3 caracteres.
+            if (nome.matches("^[a-zA-ZÀ-ÿ\\s]{3,}$")) {
+                return nome;
+            }
+
+            System.out.println("❌ Entrada inválida! O nome deve conter apenas letras e ter no mínimo 3 caracteres.");
+        }
+    }
+
+    public static String lerNumeroConta(Scanner teclado, String mensagem) {
+        String numero;
+        while (true) {
+            System.out.print(mensagem);
+            numero = teclado.next().trim();
+
+            if (numero.matches("^\\d{5}-\\d$")) {
+                return numero;
+            }
+
+            System.out.println("❌ Formato inválido! O número da conta deve seguir o padrão XXXXX-X (Ex: 12345-6).");
+        }
+    }
 }
