@@ -1,6 +1,7 @@
 package com.victor.saas_pagamentos.controller;
 
 import com.victor.saas_pagamentos.model.Plano;
+import com.victor.saas_pagamentos.repository.PlanoRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -10,17 +11,22 @@ import java.util.List;
 @RequestMapping("/planos")
 public class PlanoController {
 
-    //Lista temporária na memória ("banco de dados")
-    private List<Plano> bancoDePlanos = new ArrayList<>();
+    private final PlanoRepository repository;
+
+    //Injetando dependência via construtor
+    public PlanoController(PlanoRepository repository) {
+        this.repository = repository;
+    }
 
     @PostMapping
-    public String criarPlano(@RequestBody Plano novoPlano) {
-        bancoDePlanos.add(novoPlano);
-        return "✅ Plano '" + novoPlano.getNome() + "' criado com sucesso no valor de R$ " + novoPlano.getValor();
+    public Plano criarPlano(@RequestBody Plano novoPlano) {
+        //O método save() grava no banco de dados e retorna o objeto com o ID preenchido
+        return repository.save(novoPlano);
     }
 
     @GetMapping
     public List<Plano> listarPlanos() {
-        return bancoDePlanos;
+        //O método findAll() faz um "SELECT * FROM PLANO" e retorna a lista
+        return repository.findAll();
     }
 }
