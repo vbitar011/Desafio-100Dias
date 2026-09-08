@@ -40,6 +40,7 @@ Abaixo estão os endpoints disponíveis e os contratos de comunicação.
   "nome": "Plano Pro",
   "valor": 49.90
 }
+```
 
 *   **Respostas Possíveis:**
 
