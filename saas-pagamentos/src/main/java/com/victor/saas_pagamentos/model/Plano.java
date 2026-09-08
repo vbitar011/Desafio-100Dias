@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 public class Plano {
@@ -12,7 +14,10 @@ public class Plano {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //A chave primária, gerada automaticamente pelo banco.
 
+    @NotBlank(message = "O nome do plano é obrigatório.")
     private String nome;
+
+    @Positive(message = "O valor do plano deve ser maior que zero.")
     private double valor;
 
     //Construtores
