@@ -53,10 +53,36 @@ Abaixo estão os endpoints disponíveis e os contratos de comunicação.
 *   **Descrição:** Retorna a lista de todos os planos cadastrados no banco de dados.
 *   **Retorno:** Array de objetos JSON contendo id, nome e valor.
 
-####🚀 Como Executar
+#### 🚀 Como Executar
 *   **Clone o repositório.**
 *   **Abra a pasta saas-pagamentos na sua IDE (IntelliJ, Eclipse, etc).**
 *   **Aguarde o Maven baixar as dependências (pom.xml).**
 *   **Execute a classe SaasPagamentosApplication.java.**
 *   **A API estará disponível na porta http://localhost:8080.**
 *   **O console do banco de dados H2 pode ser acessado em http://localhost:8080/h2-console (JDBC URL: jdbc:h2:mem:saasdb).**
+
+### 👤 Módulo: Clientes
+
+#### 1. Cadastrar um Novo Cliente
+*   **Rota:** `POST /clientes`
+*   **Descrição:** Registra um novo cliente na plataforma.
+*   **Regras de Negócio:** Nome obrigatório. O e-mail deve ter um formato válido (validação via Regex/Bean Validation).
+
+**Payload Esperado (Corpo da Requisição):**
+```json
+{
+  "nome": "Victor",
+  "email": "victor@email.com"
+}
+```
+
+*   **Respostas Possíveis:**
+
+*   **200 OK:** Cliente cadastrado e persistido no banco com sucesso.
+*   **400 Bad Request:** Falha de validação (E-mail em formato inválido ou campos ausentes).
+
+#### 2. Listar Todos os Clientes
+
+*   **Rota:** GET /clientes
+*   **Descrição:** Retorna a lista de todos os clientes cadastrados.
+*   **Retorno:** Array de objetos JSON contendo id, nome e email.
