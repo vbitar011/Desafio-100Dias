@@ -18,12 +18,12 @@ public class Plano {
     private String nome;
 
     @Positive(message = "O valor do plano deve ser maior que zero.")
-    private double valor;
+    private Double valor;
 
     //Construtores
     public Plano() {}
 
-    public Plano(String nome, double valor) {
+    public Plano(String nome, Double valor) {
         this.nome = nome;
         this.valor = valor;
     }
@@ -35,6 +35,8 @@ public class Plano {
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
-    public double getValor() { return valor; }
+    public Double getValor() { return valor; }
     public void setValor(double valor) { this.valor = valor; }
+
+    public void setId(Long id) { this.id = id; }
 }

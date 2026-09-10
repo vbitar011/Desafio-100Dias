@@ -86,3 +86,32 @@ Abaixo estão os endpoints disponíveis e os contratos de comunicação.
 *   **Rota:** GET /clientes
 *   **Descrição:** Retorna a lista de todos os clientes cadastrados.
 *   **Retorno:** Array de objetos JSON contendo id, nome e email.
+
+### 🤝 Módulo: Assinaturas
+
+#### 1. Criar uma Assinatura
+*   **Rota:** `POST /assinaturas`
+*   **Descrição:** Vincula um Cliente existente a um Plano existente.
+*   **Regras de Negócio:** Recebe apenas os IDs de referência. A data de início é gerada automaticamente pelo servidor e o status inicial é "ATIVA".
+
+**Payload Esperado (Corpo da Requisição):**
+```json
+{
+  "cliente": {
+    "id": 1
+  },
+  "plano": {
+    "id": 1
+  }
+}
+```
+
+*   **Respostas Possíveis:**
+
+*   **200 OK:** Relacionamento salvo no banco de dados com sucesso.
+*   **400 Bad Request:** JSON mal formatado ou erro de validação.
+
+#### 2. Listar Assinaturas
+
+*   **Rota:** GET /assinaturas
+*   **Descrição:** Retorna a lista de todas as assinaturas vinculadas.
