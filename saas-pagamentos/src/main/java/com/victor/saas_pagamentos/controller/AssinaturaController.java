@@ -65,4 +65,25 @@ public class AssinaturaController {
                 ))
                 .toList();
     }
+
+    @PatchMapping("/{id}/cancelar")
+    public AssinaturaResponseDTO cancelarAssinatura(@PathVariable Long id) {
+        //1. Busca a assinatura no banco de dados pelo ID passado na URL
+        Assinatura assinatura = repository.findById(id).orElseThrow();
+
+        //2. Altera o status(Soft Delete)
+        assinatura.setStatus("CANCELADA");
+
+        //3. Salva a mudança
+        Assinatura salva = repository.save(assinatura);
+
+        //4. Devolve o DTO atualizado
+        return new AssinaturaResponseDTO(
+                salva.getId(),
+                salva.getCliente().getNome(),
+                salva.getPlano().getNome(),
+                salva.getDataInicio(),
+                salva.getStatus()
+        );
+    }
 }

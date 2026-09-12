@@ -115,3 +115,18 @@ Abaixo estão os endpoints disponíveis e os contratos de comunicação.
 
 *   **Rota:** GET /assinaturas
 *   **Descrição:** Retorna a lista de todas as assinaturas vinculadas.
+
+#### 3. Cancelar uma Assinatura (Soft Delete)
+*   **Rota:** `PATCH /assinaturas/{id}/cancelar`
+*   **Descrição:** Realiza a exclusão lógica de uma assinatura, alterando seu status para "CANCELADA" sem remover o histórico do banco de dados.
+*   **Regras de Negócio:** O ID passado na URL deve existir no banco de dados.
+
+**Exemplo de Resposta (200 OK):**
+```json
+{
+  "id": 1,
+  "nomeCliente": "Victor",
+  "nomePlano": "Plano Pro",
+  "dataInicio": "2026-09-12",
+  "status": "CANCELADA"
+}
