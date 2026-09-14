@@ -53,6 +53,17 @@ Abaixo estão os endpoints disponíveis e os contratos de comunicação.
 *   **Descrição:** Retorna a lista de todos os planos cadastrados no banco de dados.
 *   **Retorno:** Array de objetos JSON contendo id, nome e valor.
 
+---
+
+## 🛡️ Tratamento de Erros (Global)
+
+A API possui um interceptador global de exceções (`@RestControllerAdvice`) para garantir que erros internos não sejam expostos e que o cliente receba respostas HTTP padronizadas.
+
+*   **Entidade não encontrada (404 Not Found):** Se o cliente enviar um ID inexistente em rotas de busca, atualização ou deleção lógica, a API intercepta a falha e retorna o status `404` com uma mensagem amigável de erro.
+*   **Dados Inválidos (400 Bad Request):** Disparado automaticamente pelo Jakarta Bean Validation se o payload violar regras (ex: campos vazios, valores negativos ou e-mails mal formatados).
+
+---
+
 #### 🚀 Como Executar
 *   **Clone o repositório.**
 *   **Abra a pasta saas-pagamentos na sua IDE (IntelliJ, Eclipse, etc).**
