@@ -3,13 +3,16 @@ package com.victor.saas_pagamentos.controller;
 import com.victor.saas_pagamentos.dto.AssinaturaResponseDTO;
 import com.victor.saas_pagamentos.model.Assinatura;
 import com.victor.saas_pagamentos.model.Cliente;
+import com.victor.saas_pagamentos.model.Pagamento;
 import com.victor.saas_pagamentos.model.Plano;
 import com.victor.saas_pagamentos.repository.AssinaturaRepository;
 import com.victor.saas_pagamentos.repository.ClienteRepository;
+import com.victor.saas_pagamentos.repository.PagamentoRepository;
 import com.victor.saas_pagamentos.repository.PlanoRepository;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -19,14 +22,17 @@ public class AssinaturaController {
     private final AssinaturaRepository repository;
     private final ClienteRepository clienteRepository;
     private final PlanoRepository planoRepository;
+    private final PagamentoRepository pagamentoRepository;
 
-    // O Spring Boot vai injetar os 3 repositórios automaticamente aqui
+    //O Spring Boot vai injetar os 4 repositórios automaticamente aqui
     public AssinaturaController(AssinaturaRepository repository,
                                 ClienteRepository clienteRepository,
-                                PlanoRepository planoRepository) {
+                                PlanoRepository planoRepository,
+                                PagamentoRepository pagamentoRepository) {
         this.repository = repository;
         this.clienteRepository = clienteRepository;
         this.planoRepository = planoRepository;
+        this.pagamentoRepository = pagamentoRepository;
     }
 
     @PostMapping
@@ -42,6 +48,15 @@ public class AssinaturaController {
 
         //3. Agora salva. O objeto 'salva' terá todos os dados preenchidos.
         Assinatura salva = repository.save(novaAssinatura);
+
+        //--- INÍCIO DA AUTOMAÇÃO DE PAGAMENTO ---
+        //Cria um pagamento pendente para daqui a 5 dias, com o valor exato do plano
+        Pagamento primeiroPagamento = new Pagamento(
+                salva,
+                planoReal.getValor(),
+                LocalDate.now().plusDays(5)
+        );
+        pagamentoRepository.save(primeiroPagamento);
 
         //4. Mapea para o DTO
         return new AssinaturaResponseDTO(
