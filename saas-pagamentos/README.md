@@ -141,3 +141,27 @@ A API possui um interceptador global de exceções (`@RestControllerAdvice`) par
   "dataInicio": "2026-09-12",
   "status": "CANCELADA"
 }
+```
+
+### 💰 Módulo: Pagamentos
+
+#### 1. Listar Pagamentos
+*   **Rota:** `GET /pagamentos`
+*   **Descrição:** Retorna o histórico de todas as cobranças (boletos/cartão) geradas pelo sistema.
+*   **Retorno:** Array de objetos achatados (DTO) com o ID da assinatura vinculada.
+
+#### 2. Pagar uma Cobrança
+*   **Rota:** `PATCH /pagamentos/{id}/pagar`
+*   **Descrição:** Simula a aprovação financeira de uma transação.
+*   **Regras de Negócio:** Altera o status do pagamento para "PAGO". O ID da cobrança deve existir (retorna 404 caso contrário).
+
+**Exemplo de Resposta (200 OK):**
+```json
+{
+  "id": 1,
+  "assinaturaId": 1,
+  "valor": 49.9,
+  "dataVencimento": "2026-09-20",
+  "status": "PAGO"
+}
+```
