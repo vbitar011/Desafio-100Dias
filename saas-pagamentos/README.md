@@ -165,3 +165,9 @@ A API possui um interceptador global de exceções (`@RestControllerAdvice`) par
   "status": "PAGO"
 }
 ```
+
+*   **Regras de Negócio:** Altera o estado do pagamento para "PAGO". O ID da cobrança deve existir (retorna 404 caso contrário). Se o pagamento já se encontrar no estado "PAGO", a API rejeita a operação com um erro de validação.
+
+**Exemplo de Resposta de Erro (400 Bad Request - Regra de Negócio):**
+```text
+Erro de Validação: Este pagamento já foi processado e não pode ser pago novamente.

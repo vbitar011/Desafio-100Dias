@@ -1,6 +1,7 @@
 package com.victor.saas_pagamentos.controller;
 
 import com.victor.saas_pagamentos.dto.PagamentoResponseDTO;
+import com.victor.saas_pagamentos.infra.RegraDeNegocioException;
 import com.victor.saas_pagamentos.model.Pagamento;
 import com.victor.saas_pagamentos.repository.PagamentoRepository;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,10 @@ public class PagamentoController {
     public PagamentoResponseDTO darBaixaNoPagamento(@PathVariable Long id) {
         //Busca o pagamento no banco (se não achar, o TratadorDeErros devolve 404)
         Pagamento pagamento = repository.findById(id).orElseThrow();
+
+        if ("PAGO".equals(pagamento.getStatus())) {
+            throw new RegraDeNegocioException("Este pagamento já foi processado e não pode ser pago novamente.");
+        }
 
         //Muda o status simulando que o cartão de crédito aprovou a compra
         pagamento.setStatus("PAGO");
