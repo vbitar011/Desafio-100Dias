@@ -177,3 +177,10 @@ Erro de Validação: Este pagamento já foi processado e não pode ser pago nova
 *   **Rota:** `PATCH /assinaturas/{id}/cancelar`
 *   **Descrição:** Realiza a exclusão lógica de uma assinatura, alterando o seu estado para "CANCELADA".
 *   **Efeito Cascata (Side-effect):** Qualquer pagamento associado a esta assinatura que ainda se encontre no estado "PENDENTE" será automaticamente alterado para "CANCELADO" para evitar cobranças indevidas.
+
+## 📚 Documentação Interativa (Swagger)
+
+A API possui documentação interativa gerada automaticamente pelo Swagger (OpenAPI). Através desta interface, é possível visualizar todos os *endpoints*, esquemas de dados (DTOs) e testar as requisições em tempo real.
+
+Para aceder, execute a aplicação localmente e abra o seguinte endereço no seu navegador:
+*   **🔗 Swagger UI:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
