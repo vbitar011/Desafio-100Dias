@@ -83,16 +83,23 @@ public class AssinaturaController {
 
     @PatchMapping("/{id}/cancelar")
     public AssinaturaResponseDTO cancelarAssinatura(@PathVariable Long id) {
-        //1. Busca a assinatura no banco de dados pelo ID passado na URL
+        //1. Busca a assinatura no banco de dados pelo ID passado na URL e cancela a assinatura principal
         Assinatura assinatura = repository.findById(id).orElseThrow();
-
-        //2. Altera o status(Soft Delete)
         assinatura.setStatus("CANCELADA");
-
-        //3. Salva a mudança
         Assinatura salva = repository.save(assinatura);
 
-        //4. Devolve o DTO atualizado
+        //2. Busca todas as cobranças que ainda estão pendentes para essa assinatura
+        List<Pagamento> pagamentosPendentes = pagamentoRepository.findByAssinaturaIdAndStatus(id, "PENDENTE");
+
+        //3. Altera o status de cada uma(Soft Delete)
+        for (Pagamento pagamento : pagamentosPendentes) {
+            pagamento.setStatus("CANCELADO");
+        }
+
+        //4. Guarda as alterações de todos os pagamentos de uma só vez
+        pagamentoRepository.saveAll(pagamentosPendentes);
+
+        //5. Devolve o DTO atualizado
         return new AssinaturaResponseDTO(
                 salva.getId(),
                 salva.getCliente().getNome(),

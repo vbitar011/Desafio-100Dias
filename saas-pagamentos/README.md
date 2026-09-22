@@ -171,3 +171,9 @@ A API possui um interceptador global de exceções (`@RestControllerAdvice`) par
 **Exemplo de Resposta de Erro (400 Bad Request - Regra de Negócio):**
 ```text
 Erro de Validação: Este pagamento já foi processado e não pode ser pago novamente.
+```
+
+#### 3. Cancelar uma Assinatura (Soft Delete)
+*   **Rota:** `PATCH /assinaturas/{id}/cancelar`
+*   **Descrição:** Realiza a exclusão lógica de uma assinatura, alterando o seu estado para "CANCELADA".
+*   **Efeito Cascata (Side-effect):** Qualquer pagamento associado a esta assinatura que ainda se encontre no estado "PENDENTE" será automaticamente alterado para "CANCELADO" para evitar cobranças indevidas.
