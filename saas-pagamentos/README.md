@@ -21,6 +21,11 @@ O desenvolvimento foca em boas práticas de mercado, incluindo validação rigor
 *   **Banco de Dados:** H2 Database (In-Memory para desenvolvimento)
 *   **Validação:** Jakarta Bean Validation
 
+## ⚙️ Configurações de Ambiente (Produção / Local)
+
+*   **Base de Dados:** O sistema utiliza o MySQL para persistência real de dados. A API criará as tabelas automaticamente na primeira execução através da propriedade `spring.jpa.hibernate.ddl-auto=update`.
+*   **Segurança (CORS):** A API está configurada para aceitar requisições externas nativamente (CORS ativado para métodos padrão), permitindo a integração direta com aplicações Front-end (ex: React, Vue, Angular) a correr nas portas locais `3000` ou `5173`.
+
 ---
 
 ## 📚 Documentação da API (Endpoints)
