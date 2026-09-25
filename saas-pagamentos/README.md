@@ -97,11 +97,11 @@ A API possui um interceptador global de exceções (`@RestControllerAdvice`) par
 *   **200 OK:** Cliente cadastrado e persistido no banco com sucesso.
 *   **400 Bad Request:** Falha de validação (E-mail em formato inválido ou campos ausentes).
 
-#### 2. Listar Todos os Clientes
-
-*   **Rota:** GET /clientes
-*   **Descrição:** Retorna a lista de todos os clientes cadastrados.
-*   **Retorno:** Array de objetos JSON contendo id, nome e email.
+#### 2. Listar Clientes (Paginado)
+*   **Rota:** `GET /clientes`
+*   **Parâmetros Opcionais (Query):** `page` (página atual, default: 0), `size` (limite por página, default: 10), `sort` (campo de ordenação, default: nome).
+*   **Descrição:** Retorna uma lista paginada de clientes registados.
+*   **Retorno:** Objeto `Page` contendo o array `content` com os DTOs e metadados de navegação.
 
 ### 🤝 Módulo: Assinaturas
 
