@@ -4,6 +4,9 @@ import com.victor.saas_pagamentos.dto.PagamentoResponseDTO;
 import com.victor.saas_pagamentos.infra.RegraDeNegocioException;
 import com.victor.saas_pagamentos.model.Pagamento;
 import com.victor.saas_pagamentos.repository.PagamentoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,16 +23,16 @@ public class PagamentoController {
 
     //Rota 1: Lista todos os pagamentos gerados
     @GetMapping
-    public List<PagamentoResponseDTO> listarPagamentos() {
-        return repository.findAll().stream()
+    public Page<PagamentoResponseDTO> listarPagamentos(@PageableDefault(size = 10, page = 0, sort = "dataVencimento") Pageable paginacao) {
+
+        return repository.findAll(paginacao)
                 .map(pagamento -> new PagamentoResponseDTO(
                         pagamento.getId(),
                         pagamento.getAssinatura().getId(),
                         pagamento.getValor(),
                         pagamento.getDataVencimento(),
                         pagamento.getStatus()
-                ))
-                .toList();
+                ));
     }
 
     //Rota 2: Simula o pagamento da cobrança

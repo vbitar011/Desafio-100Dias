@@ -3,6 +3,9 @@ package com.victor.saas_pagamentos.controller;
 import com.victor.saas_pagamentos.model.Plano;
 import com.victor.saas_pagamentos.repository.PlanoRepository;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -26,8 +29,8 @@ public class PlanoController {
     }
 
     @GetMapping
-    public List<Plano> listarPlanos() {
+    public Page<Plano> listarPlanos(@PageableDefault(size = 10, page = 0, sort = "nome") Pageable paginacao){
         //O método findAll() faz um "SELECT * FROM PLANO" e retorna a lista
-        return repository.findAll();
+        return repository.findAll(paginacao);
     }
 }

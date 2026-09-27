@@ -10,6 +10,10 @@ import com.victor.saas_pagamentos.repository.ClienteRepository;
 import com.victor.saas_pagamentos.repository.PagamentoRepository;
 import com.victor.saas_pagamentos.repository.PlanoRepository;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -69,16 +73,15 @@ public class AssinaturaController {
     }
 
     @GetMapping
-    public List<AssinaturaResponseDTO> listarAssinaturas() {
-        return repository.findAll().stream()
+    public Page<AssinaturaResponseDTO> listarAssinaturas(@PageableDefault(size = 10, page = 0, sort = "dataInicio") Pageable paginacao){
+        return repository.findAll(paginacao)
                 .map(assinatura -> new AssinaturaResponseDTO(
                         assinatura.getId(),
                         assinatura.getCliente().getNome(),
                         assinatura.getPlano().getNome(),
                         assinatura.getDataInicio(),
                         assinatura.getStatus()
-                ))
-                .toList();
+                ));
     }
 
     @PatchMapping("/{id}/cancelar")
