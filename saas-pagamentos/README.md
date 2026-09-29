@@ -60,14 +60,14 @@ Abaixo estão os endpoints disponíveis e os contratos de comunicação.
 
 ---
 
-### 🛡️ Tratamento de Erros (Global)
+## 🛡️ Tratamento de Erros (Global)
 
 A API possui um interceptador global de exceções (`@RestControllerAdvice`) para garantir que erros internos não sejam expostos e que o cliente receba respostas HTTP padronizadas.
 
 *   **Entidade não encontrada (404 Not Found):** Se o cliente enviar um ID inexistente em rotas de busca, atualização ou deleção lógica, a API intercepta a falha e retorna o status `404` com uma mensagem amigável de erro.
 *   **Dados Inválidos (400 Bad Request):** Disparado automaticamente pelo Jakarta Bean Validation se o payload violar regras (ex: campos vazios, valores negativos ou e-mails mal formatados).
 
-## 🛡️ Erros de Validação (400 Bad Request)
+### 🛡️ Erros de Validação (400 Bad Request)
 Quando o *payload* enviado não cumpre as regras de formatação exigidas, a API retorna o status `400` juntamente com uma lista detalhada dos campos afetados:
 
 ```json
