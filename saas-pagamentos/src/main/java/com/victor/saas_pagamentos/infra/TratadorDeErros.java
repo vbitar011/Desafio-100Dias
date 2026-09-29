@@ -20,4 +20,14 @@ public class TratadorDeErros {
         //Intercepta a exceção customizada e devolve Status 400 com a mensagem específica
         return ResponseEntity.status(400).body("Erro de Validação: " + ex.getMessage());
     }
+
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<java.util.List<com.victor.saas_pagamentos.dto.ErroValidacaoDTO>> tratarErroValidacao(org.springframework.web.bind.MethodArgumentNotValidException ex) {
+
+        var erros = ex.getFieldErrors().stream()
+                .map(erro -> new com.victor.saas_pagamentos.dto.ErroValidacaoDTO(erro.getField(), erro.getDefaultMessage()))
+                .toList();
+
+        return ResponseEntity.status(400).body(erros);
+    }
 }
