@@ -1,5 +1,6 @@
 package com.victor.saas_pagamentos.controller;
 
+import com.victor.saas_pagamentos.dto.ClienteRequestDTO;
 import com.victor.saas_pagamentos.dto.ClienteResponseDTO;
 import com.victor.saas_pagamentos.model.Cliente;
 import com.victor.saas_pagamentos.repository.ClienteRepository;
@@ -23,7 +24,13 @@ public class ClienteController {
     }
 
     @PostMapping
-    public Cliente criarCliente(@Valid @RequestBody Cliente novoCliente) {
+    public Cliente criarCliente(@Valid @RequestBody ClienteRequestDTO dto) {
+        //Extrai os dados seguros do DTO e monta a Entidade Cliente
+        Cliente novoCliente = new Cliente();
+        novoCliente.setNome(dto.nome());
+        novoCliente.setEmail(dto.email());
+
+        //Guarda e devolve
         return repository.save(novoCliente);
     }
 

@@ -82,6 +82,11 @@ Quando o *payload* enviado não cumpre as regras de formatação exigidas, a API
   }
 ]
 ```
+
+### 🏗️ Arquitetura de Dados (DTOs)
+A API implementa o padrão Data Transfer Object para garantir segurança e encapsulamento:
+*   **Request DTOs:** Filtram e validam a entrada de dados, prevenindo vulnerabilidades de *Mass Assignment*.
+*   **Response DTOs:** Controlam os dados expostos nas respostas, ocultando metadados internos ou informações irrelevantes.
 ---
 
 #### 🚀 Como Executar
