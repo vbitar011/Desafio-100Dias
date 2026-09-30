@@ -1,6 +1,10 @@
 package com.victor.saas_pagamentos.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.time.LocalDate;
 
 @Entity
@@ -14,7 +18,13 @@ public class Pagamento {
     @JoinColumn(name = "assinatura_id")
     private Assinatura assinatura;
 
+    @NotNull(message = "O valor do pagamento é obrigatório.")
+    @Positive(message = "O valor da cobrança não pode ser negativo ou zero.")
     private Double valor;
+
+    @NotNull(message = "A data de vencimento é obrigatória.")
+    @FutureOrPresent(message = "A data de vencimento não pode estar no passado.")
+
     private LocalDate dataVencimento;
     private String status = "PENDENTE"; //Pode ser PENDENTE, PAGO ou CANCELADO
 

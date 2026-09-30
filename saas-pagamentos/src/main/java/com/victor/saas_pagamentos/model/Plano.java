@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 @Entity
@@ -17,8 +18,9 @@ public class Plano {
     @NotBlank(message = "O nome do plano é obrigatório.")
     private String nome;
 
+    @NotNull(message = "O valor do plano é obrigatório.")
     @Positive(message = "O valor do plano deve ser maior que zero.")
-    private Double valor;
+    private Double valor; //(ou BigDecimal, consoante o que estiver a usar)
 
     //Construtores
     public Plano() {}
