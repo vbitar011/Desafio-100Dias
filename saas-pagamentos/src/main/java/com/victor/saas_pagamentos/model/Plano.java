@@ -15,11 +15,8 @@ public class Plano {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //A chave primária, gerada automaticamente pelo banco.
 
-    @NotBlank(message = "O nome do plano é obrigatório.")
     private String nome;
 
-    @NotNull(message = "O valor do plano é obrigatório.")
-    @Positive(message = "O valor do plano deve ser maior que zero.")
     private Double valor; //(ou BigDecimal, consoante o que estiver a usar)
 
     //Construtores

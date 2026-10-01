@@ -1,5 +1,6 @@
 package com.victor.saas_pagamentos.controller;
 
+import com.victor.saas_pagamentos.dto.PlanoRequestDTO;
 import com.victor.saas_pagamentos.model.Plano;
 import com.victor.saas_pagamentos.repository.PlanoRepository;
 import jakarta.validation.Valid;
@@ -23,8 +24,11 @@ public class PlanoController {
     }
 
     @PostMapping
-    public Plano criarPlano(@Valid @RequestBody Plano novoPlano) {
-        //O método save() grava no banco de dados e retorna o objeto com o ID preenchido
+    public Plano criarPlano(@Valid @RequestBody PlanoRequestDTO dto) {
+        Plano novoPlano = new Plano();
+        novoPlano.setNome(dto.nome());
+        novoPlano.setValor(dto.valor());
+
         return repository.save(novoPlano);
     }
 
