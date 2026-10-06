@@ -1,5 +1,6 @@
 package com.victor.saas_pagamentos.controller;
 
+import com.victor.saas_pagamentos.dto.AssinaturaRequestDTO;
 import com.victor.saas_pagamentos.dto.AssinaturaResponseDTO;
 import com.victor.saas_pagamentos.model.Assinatura;
 import com.victor.saas_pagamentos.model.Cliente;
@@ -9,6 +10,7 @@ import com.victor.saas_pagamentos.repository.AssinaturaRepository;
 import com.victor.saas_pagamentos.repository.ClienteRepository;
 import com.victor.saas_pagamentos.repository.PagamentoRepository;
 import com.victor.saas_pagamentos.repository.PlanoRepository;
+import com.victor.saas_pagamentos.service.AssinaturaService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 
@@ -27,49 +29,25 @@ public class AssinaturaController {
     private final ClienteRepository clienteRepository;
     private final PlanoRepository planoRepository;
     private final PagamentoRepository pagamentoRepository;
+    private final AssinaturaService assinaturaService;
 
     //O Spring Boot vai injetar os 4 repositórios automaticamente aqui
     public AssinaturaController(AssinaturaRepository repository,
                                 ClienteRepository clienteRepository,
                                 PlanoRepository planoRepository,
-                                PagamentoRepository pagamentoRepository) {
+                                PagamentoRepository pagamentoRepository,
+                                AssinaturaService assinaturaService) {
         this.repository = repository;
         this.clienteRepository = clienteRepository;
         this.planoRepository = planoRepository;
         this.pagamentoRepository = pagamentoRepository;
+        this.assinaturaService = assinaturaService;
     }
 
     @PostMapping
-    public AssinaturaResponseDTO criarAssinatura(@Valid @RequestBody Assinatura novaAssinatura) {
-
-        //1. Busca as entidades REAIS no banco de dados usando os IDs da "casca"
-        Cliente clienteReal = clienteRepository.findById(novaAssinatura.getCliente().getId()).orElseThrow();
-        Plano planoReal = planoRepository.findById(novaAssinatura.getPlano().getId()).orElseThrow();
-
-        //2. Troca as "cascas" vazias pelos objetos completos
-        novaAssinatura.setCliente(clienteReal);
-        novaAssinatura.setPlano(planoReal);
-
-        //3. Agora salva. O objeto 'salva' terá todos os dados preenchidos.
-        Assinatura salva = repository.save(novaAssinatura);
-
-        //--- INÍCIO DA AUTOMAÇÃO DE PAGAMENTO ---
-        //Cria um pagamento pendente para daqui a 5 dias, com o valor exato do plano
-        Pagamento primeiroPagamento = new Pagamento(
-                salva,
-                planoReal.getValor(),
-                LocalDate.now().plusDays(5)
-        );
-        pagamentoRepository.save(primeiroPagamento);
-
-        //4. Mapea para o DTO
-        return new AssinaturaResponseDTO(
-                salva.getId(),
-                salva.getCliente().getNome(),
-                salva.getPlano().getNome(),
-                salva.getDataInicio(),
-                salva.getStatus()
-        );
+    public Assinatura criarAssinatura(@Valid @RequestBody AssinaturaRequestDTO dto) {
+        //Delega a responsabilidade para o Serviço
+        return assinaturaService.criarAssinatura(dto);
     }
 
     @GetMapping
