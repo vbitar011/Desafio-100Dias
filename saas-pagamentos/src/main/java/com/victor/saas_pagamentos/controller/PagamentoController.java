@@ -4,10 +4,15 @@ import com.victor.saas_pagamentos.dto.PagamentoResponseDTO;
 import com.victor.saas_pagamentos.infra.RegraDeNegocioException;
 import com.victor.saas_pagamentos.model.Pagamento;
 import com.victor.saas_pagamentos.repository.PagamentoRepository;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import com.victor.saas_pagamentos.service.PagamentoService;
+import com.victor.saas_pagamentos.dto.PagamentoRequestDTO;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -16,9 +21,11 @@ import java.util.List;
 public class PagamentoController {
 
     private final PagamentoRepository repository;
+    private final PagamentoService pagamentoService;
 
-    public PagamentoController(PagamentoRepository repository) {
+    public PagamentoController(PagamentoRepository repository, PagamentoService pagamentoService) {
         this.repository = repository;
+        this.pagamentoService = pagamentoService;
     }
 
     //Rota 1: Lista todos os pagamentos gerados
@@ -35,29 +42,14 @@ public class PagamentoController {
                 ));
     }
 
+    @PostMapping
+    public Pagamento criarPagamento(@Valid @RequestBody PagamentoRequestDTO dto) {
+        return pagamentoService.gerarPagamento(dto);
+    }
+
     //Rota 2: Simula o pagamento da cobrança
     @PatchMapping("/{id}/pagar")
-    public PagamentoResponseDTO darBaixaNoPagamento(@PathVariable Long id) {
-        //Busca o pagamento no banco (se não achar, o TratadorDeErros devolve 404)
-        Pagamento pagamento = repository.findById(id).orElseThrow();
-
-        if ("PAGO".equals(pagamento.getStatus())) {
-            throw new RegraDeNegocioException("Este pagamento já foi processado e não pode ser pago novamente.");
-        }
-
-        //Muda o status simulando que o cartão de crédito aprovou a compra
-        pagamento.setStatus("PAGO");
-
-        //Salva a alteração
-        Pagamento salvo = repository.save(pagamento);
-
-        //Devolve o DTO atualizado
-        return new PagamentoResponseDTO(
-                salvo.getId(),
-                salvo.getAssinatura().getId(),
-                salvo.getValor(),
-                salvo.getDataVencimento(),
-                salvo.getStatus()
-        );
+    public Pagamento pagarFatura(@PathVariable Long id) {
+        return pagamentoService.confirmarPagamento(id);
     }
 }
