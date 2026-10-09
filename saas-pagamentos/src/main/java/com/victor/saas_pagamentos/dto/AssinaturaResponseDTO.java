@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 public record AssinaturaResponseDTO(
         Long id,
-        String nomeCliente,
-        String nomePlano,
+        Long clienteId, //Em vez do objeto Cliente inteiro, só o ID
+        Long planoId,   //Em vez do objeto Plano inteiro, só o ID
         LocalDate dataInicio,
         String status
 ) {}

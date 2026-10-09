@@ -28,28 +28,35 @@ public class PagamentoController {
         this.pagamentoService = pagamentoService;
     }
 
+    //Método auxiliar privado para não repetirmos código
+    private PagamentoResponseDTO mapearParaDTO(Pagamento pagamento) {
+        return new PagamentoResponseDTO(
+                pagamento.getId(),
+                pagamento.getValor(),
+                pagamento.getDataVencimento(),
+                pagamento.getStatus(),
+                pagamento.getAssinatura().getId()
+        );
+    }
+
     //Rota 1: Lista todos os pagamentos gerados
     @GetMapping
     public Page<PagamentoResponseDTO> listarPagamentos(@PageableDefault(size = 10, page = 0, sort = "dataVencimento") Pageable paginacao) {
-
+        //busca os dados à base de dados e usa o método auxiliar para mapear cada um deles
         return repository.findAll(paginacao)
-                .map(pagamento -> new PagamentoResponseDTO(
-                        pagamento.getId(),
-                        pagamento.getAssinatura().getId(),
-                        pagamento.getValor(),
-                        pagamento.getDataVencimento(),
-                        pagamento.getStatus()
-                ));
+                .map(this::mapearParaDTO);
     }
 
     @PostMapping
-    public Pagamento criarPagamento(@Valid @RequestBody PagamentoRequestDTO dto) {
-        return pagamentoService.gerarPagamento(dto);
+    public PagamentoResponseDTO criarPagamento(@Valid @RequestBody PagamentoRequestDTO dto) {
+        var pagamento = pagamentoService.gerarPagamento(dto);
+        return mapearParaDTO(pagamento);
     }
 
     //Rota 2: Simula o pagamento da cobrança
     @PatchMapping("/{id}/pagar")
-    public Pagamento pagarFatura(@PathVariable Long id) {
-        return pagamentoService.confirmarPagamento(id);
+    public PagamentoResponseDTO pagarFatura(@PathVariable Long id) {
+        var pagamento = pagamentoService.confirmarPagamento(id);
+        return mapearParaDTO(pagamento);
     }
 }

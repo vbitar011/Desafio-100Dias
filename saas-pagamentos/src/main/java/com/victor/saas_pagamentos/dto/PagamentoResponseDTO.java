@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 public record PagamentoResponseDTO(
         Long id,
-        Long assinaturaId,
         Double valor,
         LocalDate dataVencimento,
-        String status
+        String status,
+        Long assinaturaId
 ) {}

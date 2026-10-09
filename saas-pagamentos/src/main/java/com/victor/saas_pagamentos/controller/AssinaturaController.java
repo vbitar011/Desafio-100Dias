@@ -45,9 +45,18 @@ public class AssinaturaController {
     }
 
     @PostMapping
-    public Assinatura criarAssinatura(@Valid @RequestBody AssinaturaRequestDTO dto) {
-        //Delega a responsabilidade para o Serviço
-        return assinaturaService.criarAssinatura(dto);
+    public AssinaturaResponseDTO criarAssinatura(@Valid @RequestBody AssinaturaRequestDTO dto) {
+        //1. O Serviço faz o trabalho pesado e devolve a Entidade
+        var assinatura = assinaturaService.criarAssinatura(dto);
+
+        //1. O Controlador mapeia a Entidade para o ResponseDTO
+        return new AssinaturaResponseDTO(
+                assinatura.getId(),
+                assinatura.getCliente().getId(),
+                assinatura.getPlano().getId(),
+                assinatura.getDataInicio(),
+                assinatura.getStatus()
+        );
     }
 
     @GetMapping
@@ -55,8 +64,8 @@ public class AssinaturaController {
         return repository.findAll(paginacao)
                 .map(assinatura -> new AssinaturaResponseDTO(
                         assinatura.getId(),
-                        assinatura.getCliente().getNome(),
-                        assinatura.getPlano().getNome(),
+                        assinatura.getCliente().getId(),
+                        assinatura.getPlano().getId(),
                         assinatura.getDataInicio(),
                         assinatura.getStatus()
                 ));
@@ -83,8 +92,8 @@ public class AssinaturaController {
         //5. Devolve o DTO atualizado
         return new AssinaturaResponseDTO(
                 salva.getId(),
-                salva.getCliente().getNome(),
-                salva.getPlano().getNome(),
+                salva.getCliente().getId(),
+                salva.getPlano().getId(),
                 salva.getDataInicio(),
                 salva.getStatus()
         );
