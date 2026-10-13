@@ -203,6 +203,17 @@ Erro de Validação: Este pagamento já foi processado e não pode ser pago nova
 *   **Descrição:** Realiza a exclusão lógica de uma assinatura, alterando o seu estado para "CANCELADA".
 *   **Efeito Cascata (Side-effect):** Qualquer pagamento associado a esta assinatura que ainda se encontre no estado "PENDENTE" será automaticamente alterado para "CANCELADO" para evitar cobranças indevidas.
 
+## 🛡️ Segurança
+### Segurança Avançada (Spring Security & JWT) - Parte 1
+
+* **Objetivo:** Blindar a API contra acessos não autorizados e preparar a arquitetura *stateless*.
+* **Implementações:**
+    * Integração das dependências `spring-boot-starter-security` e `java-jwt`.
+    * Criação da entidade `User` (implementando `UserDetails`) e do enum `UserRole` (RBAC).
+    * Desenvolvimento do `TokenService` para geração e validação de JWT.
+    * Configuração do `SecurityFilter` para interceção de pedidos via cabeçalho de Autorização.
+    * Definição de regras de acesso no `SecurityConfigurations` e libertação das rotas do Swagger UI.
+  
 ## 📚 Documentação Interativa (Swagger)
 
 A API possui documentação interativa gerada automaticamente pelo Swagger (OpenAPI). Através desta interface, é possível visualizar todos os *endpoints*, esquemas de dados (DTOs) e testar as requisições em tempo real.
