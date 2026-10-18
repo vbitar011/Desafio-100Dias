@@ -214,6 +214,27 @@ Erro de Validação: Este pagamento já foi processado e não pode ser pago nova
     * Configuração do `SecurityFilter` para interceção de pedidos via cabeçalho de Autorização.
     * Definição de regras de acesso no `SecurityConfigurations` e libertação das rotas do Swagger UI.
   
+## Segurança e Autenticação (Spring Security & JWT)
+
+* Integração das dependências `spring-boot-starter-security` e `java-jwt`.
+* Criação da entidade `User` com e-mail único blindado e perfis de acesso restritos (`UserRole`).
+* Implementação do `SecurityFilter` para interceção de rotas e validação de tokens JWT (Arquitetura Stateless).
+* Criação do `AuthController` com validação estrita de dados (DTOs) para os endpoints `/auth/register` (forçando o perfil `USER` no backend) e `/auth/login`.
+* Configuração do Swagger/Springdoc UI com suporte nativo a tokens Bearer.
+* Isolamento de segurança: Proteção das credenciais do banco de dados e do segredo criptográfico JWT através de variáveis de ambiente.
+
+## Correções e Regras de Negócio
+* Correção do ciclo de vida do `Pagamento`: Remoção da restrição `@FutureOrPresent` para permitir atualizações em faturas vencidas pelo Hibernate.
+* Refatoração no `PagamentoService`: Implementação de validações rigorosas de estado (bloqueio de liquidação para cobranças já no estado `PAGO` ou `CANCELADO`, ou quando a `Assinatura` atrelada estiver cancelada).
+
+### Configuração de Ambiente Local
+O projeto exige a injeção das seguintes variáveis de ambiente na IDE de execução (baseado num ficheiro `.env` estritamente local e não versionado):
+* `DB_URL`: String de conexão JDBC MySQL.
+* `DB_USERNAME`: Utilizador da base de dados.
+* `DB_PASSWORD`: Senha do utilizador.
+* `API_SECURITY_TOKEN_SECRET`: Chave criptográfica (mínimo 256 bits) para assinatura dos tokens JWT.
+> **Nota:** Utilize o ficheiro `.env.example` versionado como template para a configuração inicial.
+
 ## 📚 Documentação Interativa (Swagger)
 
 A API possui documentação interativa gerada automaticamente pelo Swagger (OpenAPI). Através desta interface, é possível visualizar todos os *endpoints*, esquemas de dados (DTOs) e testar as requisições em tempo real.

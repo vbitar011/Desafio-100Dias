@@ -22,8 +22,6 @@ public class Pagamento {
     @Positive(message = "O valor da cobrança não pode ser negativo ou zero.")
     private Double valor;
 
-    @NotNull(message = "A data de vencimento é obrigatória.")
-    @FutureOrPresent(message = "A data de vencimento não pode estar no passado.")
 
     private LocalDate dataVencimento;
     private String status = "PENDENTE"; //Pode ser PENDENTE, PAGO ou CANCELADO

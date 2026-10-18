@@ -43,10 +43,16 @@ public class PagamentoService {
 
     public Pagamento confirmarPagamento(Long id) {
         Pagamento pagamento = pagamentoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pagamento não encontrado."));
+                .orElseThrow(() -> new RuntimeException("Pagamento não encontrado"));
 
         if ("PAGO".equals(pagamento.getStatus())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Este pagamento já se encontra liquidado.");
+            throw new RuntimeException("Pagamento já liquidado");
+        }
+        if ("CANCELADO".equals(pagamento.getStatus())) {
+            throw new RuntimeException("Cobrança cancelada não pode ser paga");
+        }
+        if (pagamento.getAssinatura() != null && "CANCELADA".equals(pagamento.getAssinatura().getStatus())) {
+            throw new RuntimeException("Assinatura cancelada, pagamento rejeitado");
         }
 
         pagamento.setStatus("PAGO");
