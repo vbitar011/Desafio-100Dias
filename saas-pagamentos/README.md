@@ -235,6 +235,16 @@ O projeto exige a injeção das seguintes variáveis de ambiente na IDE de execu
 * `API_SECURITY_TOKEN_SECRET`: Chave criptográfica (mínimo 256 bits) para assinatura dos tokens JWT.
 > **Nota:** Utilize o ficheiro `.env.example` versionado como template para a configuração inicial.
 
+## Matriz de Permissões (RBAC) e Tratamento de Erros
+* `ADMIN`: Acesso total. Exclusivo para criação de planos (`POST /planos`) e cancelamento forçado (`DELETE /assinaturas/**` e `DELETE /pagamentos/**`).
+* `USER`: Acesso a rotas de leitura (`GET /**`) e operações base de subscrição.
+* **Erros Padronizados:** Retornos JSON no formato `{ "mensagem": "...", "campos": [...] }` para 400 (Violações de regra, Constraint, Enum inválido), 403 (Acesso Negado), 404 (Recurso Não Encontrado) e 409 (Falha de Concorrência/Locking).
+
+### Regras de Negócio e Concorrência Aplicadas
+* **Bloqueio Otimista:** Implementado `@Version` nos Pagamentos para impedir liquidações concorrentes da mesma fatura.
+* **Integridade:** Utilização estrita de `BigDecimal` para atributos financeiros e validações rigorosas em DTOs.
+* **Transações:** `@Transactional` em serviços críticos (`AssinaturaService` e `PagamentoService`). Cancelamento de assinatura propaga cancelamento em cascata para pagamentos pendentes.
+
 ## 📚 Documentação Interativa (Swagger)
 
 A API possui documentação interativa gerada automaticamente pelo Swagger (OpenAPI). Através desta interface, é possível visualizar todos os *endpoints*, esquemas de dados (DTOs) e testar as requisições em tempo real.

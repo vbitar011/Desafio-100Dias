@@ -1,12 +1,8 @@
 package com.victor.saas_pagamentos.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 
 @Entity
 public class Plano {
@@ -17,12 +13,13 @@ public class Plano {
 
     private String nome;
 
-    private Double valor; //(ou BigDecimal, consoante o que estiver a usar)
+    @Column(precision = 12, scale = 2)
+    private BigDecimal valor;
 
     //Construtores
     public Plano() {}
 
-    public Plano(String nome, Double valor) {
+    public Plano(String nome, BigDecimal valor) {
         this.nome = nome;
         this.valor = valor;
     }
@@ -34,8 +31,8 @@ public class Plano {
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
 
-    public Double getValor() { return valor; }
-    public void setValor(double valor) { this.valor = valor; }
+    public BigDecimal getValor() { return valor; }
+    public void setValor(BigDecimal valor) { this.valor = valor; }
 
     public void setId(Long id) { this.id = id; }
 }

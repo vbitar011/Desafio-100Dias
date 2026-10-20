@@ -1,10 +1,10 @@
 package com.victor.saas_pagamentos.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -20,15 +20,20 @@ public class Pagamento {
 
     @NotNull(message = "O valor do pagamento é obrigatório.")
     @Positive(message = "O valor da cobrança não pode ser negativo ou zero.")
-    private Double valor;
+    @Column(precision = 12, scale = 2)
+    private BigDecimal valor;
 
+    @Version
+    private Long version; //Bloqueio contra pagamentos duplicados simultâneos
 
     private LocalDate dataVencimento;
-    private String status = "PENDENTE"; //Pode ser PENDENTE, PAGO ou CANCELADO
+
+    @Enumerated(EnumType.STRING)
+    private StatusPagamento status;
 
     public Pagamento() {}
 
-    public Pagamento(Assinatura assinatura, Double valor, LocalDate dataVencimento) {
+    public Pagamento(Assinatura assinatura, @NotNull @Positive BigDecimal valor, LocalDate dataVencimento) {
         this.assinatura = assinatura;
         this.valor = valor;
         this.dataVencimento = dataVencimento;
@@ -41,12 +46,12 @@ public class Pagamento {
     public Assinatura getAssinatura() { return assinatura; }
     public void setAssinatura(Assinatura assinatura) { this.assinatura = assinatura; }
 
-    public Double getValor() { return valor; }
-    public void setValor(Double valor) { this.valor = valor; }
+    public @NotNull(message = "O valor do pagamento é obrigatório.") @Positive(message = "O valor da cobrança não pode ser negativo ou zero.") BigDecimal getValor() { return valor; }
+    public void setValor(BigDecimal valor) { this.valor = valor; }
 
     public LocalDate getDataVencimento() { return dataVencimento; }
     public void setDataVencimento(LocalDate dataVencimento) { this.dataVencimento = dataVencimento; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public StatusPagamento getStatus() { return status; }
+    public void setStatus(StatusPagamento status) { this.status = status; }
 }

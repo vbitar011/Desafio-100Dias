@@ -1,48 +1,55 @@
 package com.victor.saas_pagamentos.service;
 
 import com.victor.saas_pagamentos.dto.AssinaturaRequestDTO;
+import com.victor.saas_pagamentos.infra.RecursoNaoEncontradoException;
+import com.victor.saas_pagamentos.infra.RegraDeNegocioException;
 import com.victor.saas_pagamentos.model.Assinatura;
-import com.victor.saas_pagamentos.model.Cliente;
-import com.victor.saas_pagamentos.model.Plano;
+import com.victor.saas_pagamentos.model.StatusAssinatura;
 import com.victor.saas_pagamentos.repository.AssinaturaRepository;
-import com.victor.saas_pagamentos.repository.ClienteRepository;
-import com.victor.saas_pagamentos.repository.PlanoRepository;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDate;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AssinaturaService {
 
     private final AssinaturaRepository assinaturaRepository;
-    private final ClienteRepository clienteRepository;
-    private final PlanoRepository planoRepository;
+    private final PagamentoService pagamentoService;
 
-    public AssinaturaService(AssinaturaRepository assinaturaRepository, ClienteRepository clienteRepository, PlanoRepository planoRepository) {
+    //Injeção por construtor
+    public AssinaturaService(AssinaturaRepository assinaturaRepository, PagamentoService pagamentoService) {
         this.assinaturaRepository = assinaturaRepository;
-        this.clienteRepository = clienteRepository;
-        this.planoRepository = planoRepository;
+        this.pagamentoService = pagamentoService;
     }
 
-    public Assinatura criarAssinatura(AssinaturaRequestDTO dto) {
-        //1. Valida se o Cliente existe
-        Cliente cliente = clienteRepository.findById(dto.clienteId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado com o ID fornecido."));
+    @Transactional
+    public Assinatura criarAssinatura(Assinatura novaAssinatura) {
+        //Regra: Impedir assinatura ativa duplicada para o mesmo cliente e plano
+        boolean existeAtiva = assinaturaRepository.existsByClienteIdAndPlanoIdAndStatus(
+                novaAssinatura.getCliente().getId(),
+                novaAssinatura.getPlano().getId(),
+                StatusAssinatura.ATIVA);
 
-        //2. Valida se o Plano existe
-        Plano plano = planoRepository.findById(dto.planoId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Plano não encontrado com o ID fornecido."));
+        if (existeAtiva) {
+            throw new RegraDeNegocioException("O cliente já possui uma assinatura ativa para este plano.");
+        }
 
-        //3. Monta a Assinatura com as regras de negócio
-        Assinatura novaAssinatura = new Assinatura();
-        novaAssinatura.setCliente(cliente);
-        novaAssinatura.setPlano(plano);
-        novaAssinatura.setDataInicio(LocalDate.now()); // Data automática do servidor
-        novaAssinatura.setStatus("ATIVA"); //Status inicial padrão
-
-        //4. Guarda na base de dados
+        novaAssinatura.setStatus(StatusAssinatura.ATIVA);
         return assinaturaRepository.save(novaAssinatura);
+    }
+
+    @Transactional
+    public Assinatura cancelar(Long id) {
+        Assinatura assinatura = assinaturaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Assinatura não encontrada"));
+
+        if (assinatura.getStatus() == StatusAssinatura.CANCELADA) {
+            throw new RegraDeNegocioException("A assinatura já se encontra cancelada.");
+        }
+
+        assinatura.setStatus(StatusAssinatura.valueOf(String.valueOf(StatusAssinatura.CANCELADA)));
+        pagamentoService.cancelarPagamentosPendentesPorAssinatura(assinatura);
+
+        return assinaturaRepository.save(assinatura);
     }
 }

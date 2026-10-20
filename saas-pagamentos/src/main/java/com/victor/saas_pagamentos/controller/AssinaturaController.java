@@ -2,10 +2,8 @@ package com.victor.saas_pagamentos.controller;
 
 import com.victor.saas_pagamentos.dto.AssinaturaRequestDTO;
 import com.victor.saas_pagamentos.dto.AssinaturaResponseDTO;
-import com.victor.saas_pagamentos.model.Assinatura;
-import com.victor.saas_pagamentos.model.Cliente;
-import com.victor.saas_pagamentos.model.Pagamento;
-import com.victor.saas_pagamentos.model.Plano;
+import com.victor.saas_pagamentos.infra.RecursoNaoEncontradoException;
+import com.victor.saas_pagamentos.model.*;
 import com.victor.saas_pagamentos.repository.AssinaturaRepository;
 import com.victor.saas_pagamentos.repository.ClienteRepository;
 import com.victor.saas_pagamentos.repository.PagamentoRepository;
@@ -46,16 +44,29 @@ public class AssinaturaController {
 
     @PostMapping
     public AssinaturaResponseDTO criarAssinatura(@Valid @RequestBody AssinaturaRequestDTO dto) {
-        //1. O Serviço faz o trabalho pesado e devolve a Entidade
-        var assinatura = assinaturaService.criarAssinatura(dto);
 
-        //1. O Controlador mapeia a Entidade para o ResponseDTO
+        //1. Busca os objetos reais na base de dados usando os IDs do DTO
+        Cliente cliente = clienteRepository.findById(dto.clienteId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado"));
+
+        Plano plano = planoRepository.findById(dto.planoId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Plano não encontrado"));
+
+        //2. Instancia a Entidade e popula com os objetos
+        Assinatura novaAssinatura = new Assinatura();
+        novaAssinatura.setCliente(cliente);
+        novaAssinatura.setPlano(plano);
+
+        //3. O Serviço faz o trabalho pesado (validações e transação)
+        var assinaturaSalva = assinaturaService.criarAssinatura(novaAssinatura);
+
+        // 4. Mapeia a Entidade salva de volta para o ResponseDTO
         return new AssinaturaResponseDTO(
-                assinatura.getId(),
-                assinatura.getCliente().getId(),
-                assinatura.getPlano().getId(),
-                assinatura.getDataInicio(),
-                assinatura.getStatus()
+                assinaturaSalva.getId(),
+                assinaturaSalva.getCliente().getId(),
+                assinaturaSalva.getPlano().getId(),
+                assinaturaSalva.getDataInicio(),
+                assinaturaSalva.getStatus()
         );
     }
 
@@ -75,7 +86,7 @@ public class AssinaturaController {
     public AssinaturaResponseDTO cancelarAssinatura(@PathVariable Long id) {
         //1. Busca a assinatura no banco de dados pelo ID passado na URL e cancela a assinatura principal
         Assinatura assinatura = repository.findById(id).orElseThrow();
-        assinatura.setStatus("CANCELADA");
+        assinatura.setStatus(StatusAssinatura.valueOf("CANCELADA"));
         Assinatura salva = repository.save(assinatura);
 
         //2. Busca todas as cobranças que ainda estão pendentes para essa assinatura
@@ -83,7 +94,7 @@ public class AssinaturaController {
 
         //3. Altera o status de cada uma(Soft Delete)
         for (Pagamento pagamento : pagamentosPendentes) {
-            pagamento.setStatus("CANCELADO");
+            pagamento.setStatus(StatusPagamento.valueOf("CANCELADO"));
         }
 
         //4. Guarda as alterações de todos os pagamentos de uma só vez

@@ -1,9 +1,6 @@
 package com.victor.saas_pagamentos.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -19,6 +16,7 @@ public class Cliente {
 
     @NotBlank(message = "O e-mail é obrigatório.")
     @Email(message = "O formato do e-mail é inválido.")
+    @Column(unique = true, nullable = false)
     private String email;
 
     public Cliente() {}

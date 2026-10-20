@@ -23,7 +23,9 @@ public class Assinatura {
 
     //Dados de controle da assinatura
     private LocalDate dataInicio = LocalDate.now();
-    private String status = "ATIVA";
+
+    @Enumerated(EnumType.STRING)
+    private StatusAssinatura status;
 
     public Assinatura() {}
 
@@ -44,6 +46,6 @@ public class Assinatura {
     public LocalDate getDataInicio() { return dataInicio; }
     public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public StatusAssinatura getStatus() { return status; }
+    public void setStatus(StatusAssinatura status) { this.status = status; }
 }

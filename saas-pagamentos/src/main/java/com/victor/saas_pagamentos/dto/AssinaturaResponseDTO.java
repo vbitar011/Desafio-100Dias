@@ -7,5 +7,5 @@ public record AssinaturaResponseDTO(
         Long clienteId, //Em vez do objeto Cliente inteiro, só o ID
         Long planoId,   //Em vez do objeto Plano inteiro, só o ID
         LocalDate dataInicio,
-        String status
+        com.victor.saas_pagamentos.model.StatusAssinatura status
 ) {}
