@@ -43,6 +43,7 @@ public class SecurityConfigurations {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                         // RBAC - Regras Administrativas
+                        .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                         .requestMatchers(HttpMethod.POST, "/planos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/assinaturas/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/pagamentos/**").hasRole("ADMIN")

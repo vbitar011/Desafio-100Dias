@@ -5,10 +5,7 @@ import com.victor.saas_pagamentos.dto.ClienteResponseDTO;
 import com.victor.saas_pagamentos.model.Cliente;
 import com.victor.saas_pagamentos.repository.ClienteRepository;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,25 +21,22 @@ public class ClienteController {
     }
 
     @PostMapping
-    public Cliente criarCliente(@Valid @RequestBody ClienteRequestDTO dto) {
-        //Extrai os dados seguros do DTO e monta a Entidade Cliente
-        Cliente novoCliente = new Cliente();
-        novoCliente.setNome(dto.nome());
-        novoCliente.setEmail(dto.email());
+    public ResponseEntity<ClienteResponseDTO> criarCliente(@RequestBody @Valid ClienteRequestDTO dto) {
+        Cliente cliente = new Cliente();
+        cliente.setNome(dto.nome());
+        cliente.setEmail(dto.email());
 
-        //Guarda e devolve
-        return repository.save(novoCliente);
+        Cliente salvo = repository.save(cliente);
+
+        return ResponseEntity.ok(new ClienteResponseDTO(salvo.getId(), salvo.getNome(), salvo.getEmail()));
     }
 
     @GetMapping
-    public Page<ClienteResponseDTO> listarClientes(@PageableDefault(size = 10, page = 0, sort = "nome") Pageable paginacao) {
+    public ResponseEntity<List<ClienteResponseDTO>> listarClientes() {
+        List<ClienteResponseDTO> clientes = repository.findAll().stream()
+                .map(c -> new ClienteResponseDTO(c.getId(), c.getNome(), c.getEmail()))
+                .toList();
 
-        //O método map() funciona bem com o objeto Page
-        return repository.findAll(paginacao)
-                .map(cliente -> new ClienteResponseDTO(
-                        cliente.getId(),
-                        cliente.getNome(),
-                        cliente.getEmail()
-                ));
+        return ResponseEntity.ok(clientes);
     }
 }

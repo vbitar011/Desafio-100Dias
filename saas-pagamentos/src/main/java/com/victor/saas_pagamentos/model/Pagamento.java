@@ -14,7 +14,7 @@ public class Pagamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne //Vários pagamentos pertencem a uma mesma assinatura
+    @ManyToOne(fetch = FetchType.LAZY) //Vários pagamentos pertencem a uma mesma assinatura
     @JoinColumn(name = "assinatura_id")
     private Assinatura assinatura;
 

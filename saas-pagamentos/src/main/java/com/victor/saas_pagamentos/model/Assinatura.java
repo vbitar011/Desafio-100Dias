@@ -12,7 +12,7 @@ public class Assinatura {
     private Long id;
 
     @NotNull(message = "O cliente é obrigatório.")
-    @ManyToOne //Muitas assinaturas podem pertencer a um cliente
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class TokenService {
@@ -44,7 +45,10 @@ public class TokenService {
         }
     }
 
+    @Value("${api.security.token.expiration_hours:2}")
+    private Integer expirationHours;
+
     private Instant genExpirationDate() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return Instant.now().plus(expirationHours, ChronoUnit.HOURS);
     }
 }

@@ -11,8 +11,8 @@
 	<groupId>com.victor</groupId>
 	<artifactId>saas-pagamentos</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>SaaS Pagamentos</name>
+	<description>API REST para gestão de assinaturas e pagamentos</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -94,6 +94,18 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-mysql</artifactId>
 		</dependency>
 	</dependencies>
 

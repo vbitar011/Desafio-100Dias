@@ -1,16 +1,13 @@
 package com.victor.saas_pagamentos.controller;
 
 import com.victor.saas_pagamentos.dto.PlanoRequestDTO;
+import com.victor.saas_pagamentos.dto.PlanoResponseDTO;
 import com.victor.saas_pagamentos.model.Plano;
 import com.victor.saas_pagamentos.repository.PlanoRepository;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,23 +16,27 @@ public class PlanoController {
 
     private final PlanoRepository repository;
 
-    //Injetando dependência via construtor
     public PlanoController(PlanoRepository repository) {
         this.repository = repository;
     }
 
     @PostMapping
-    public Plano criarPlano(@Valid @RequestBody PlanoRequestDTO dto) {
-        Plano novoPlano = new Plano();
-        novoPlano.setNome(dto.nome());
-        novoPlano.setValor(dto.valor());
+    public ResponseEntity<PlanoResponseDTO> criarPlano(@RequestBody @Valid PlanoRequestDTO dto) {
+        Plano plano = new Plano();
+        plano.setNome(dto.nome());
+        plano.setValor(dto.valor());
 
-        return repository.save(novoPlano);
+        Plano salvo = repository.save(plano);
+
+        return ResponseEntity.ok(new PlanoResponseDTO(salvo.getId(), salvo.getNome(), salvo.getValor()));
     }
 
     @GetMapping
-    public Page<Plano> listarPlanos(@PageableDefault(size = 10, page = 0, sort = "nome") Pageable paginacao){
-        //O método findAll() faz um "SELECT * FROM PLANO" e retorna a lista
-        return repository.findAll(paginacao);
+    public ResponseEntity<List<PlanoResponseDTO>> listarPlanos() {
+        List<PlanoResponseDTO> planos = repository.findAll().stream()
+                .map(p -> new PlanoResponseDTO(p.getId(), p.getNome(), p.getValor()))
+                .toList();
+
+        return ResponseEntity.ok(planos);
     }
 }
