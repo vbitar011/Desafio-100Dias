@@ -226,6 +226,10 @@ Erro de Validação: Este pagamento já foi processado e não pode ser pago nova
 ## Correções e Regras de Negócio
 * Correção do ciclo de vida do `Pagamento`: Remoção da restrição `@FutureOrPresent` para permitir atualizações em faturas vencidas pelo Hibernate.
 * Refatoração no `PagamentoService`: Implementação de validações rigorosas de estado (bloqueio de liquidação para cobranças já no estado `PAGO` ou `CANCELADO`, ou quando a `Assinatura` atrelada estiver cancelada).
+*   **Controlo de Concorrência (Pessimistic Lock):** Implementação de `@Lock(LockModeType.PESSIMISTIC_WRITE)` no `AssinaturaRepository` para impedir a geração de cobranças duplicadas em requisições simultâneas.
+*   **Regras de Ownership (Dono do Recurso):** Criação do helper `UsuarioLogado` e vínculo `OneToOne` entre `User` e `Cliente`. As regras de negócio agora garantem que um perfil `USER` apenas pode listar, cancelar ou pagar as suas próprias assinaturas e cobranças (lançando `AcessoNegadoException` com HTTP 403 Forbidden em caso de violação).
+*   **Refatoração de Controladores:** Limpeza do `AssinaturaController` e `PagamentoController`, delegando o acesso a repositórios e a injeção de regras de negócio exclusivamente para as camadas de `Service`.
+*   **Tratador de Erros Global:** Mapeamento de `AuthenticationException` (401 Unauthorized) e `DataIntegrityViolationException` (409 Conflict) para retornos JSON padronizados, ocultando *stack traces* não tratados.
 
 ### Configuração de Ambiente Local
 O projeto exige a injeção das seguintes variáveis de ambiente na IDE de execução (baseado num ficheiro `.env` estritamente local e não versionado):

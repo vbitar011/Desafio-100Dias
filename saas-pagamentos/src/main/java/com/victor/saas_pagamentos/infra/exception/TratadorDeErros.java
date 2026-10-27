@@ -1,64 +1,65 @@
 package com.victor.saas_pagamentos.infra.exception;
 
+import com.victor.saas_pagamentos.dto.ErroValidacaoDTO;
 import com.victor.saas_pagamentos.infra.RecursoNaoEncontradoException;
 import com.victor.saas_pagamentos.infra.RegraDeNegocioException;
-import org.springframework.dao.OptimisticLockingFailureException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import jakarta.validation.ConstraintViolationException;
+
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class TratadorDeErros {
 
     @ExceptionHandler(RecursoNaoEncontradoException.class)
-    public ResponseEntity<ErroResponseDTO> tratarErro404(RecursoNaoEncontradoException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErroResponseDTO(ex.getMessage(), null));
+    public ResponseEntity<ErroResponseDTO> tratarErro404(RecursoNaoEncontradoException ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErroResponseDTO(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), "Not Found", ex.getMessage(), req.getRequestURI()));
     }
 
     @ExceptionHandler(RegraDeNegocioException.class)
-    public ResponseEntity<ErroResponseDTO> tratarErroDeNegocio(RegraDeNegocioException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErroResponseDTO(ex.getMessage(), null));
+    public ResponseEntity<ErroResponseDTO> tratarErroDeNegocio(RegraDeNegocioException ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErroResponseDTO(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "Bad Request", ex.getMessage(), req.getRequestURI()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErroResponseDTO> tratarErroValidacaoBean(MethodArgumentNotValidException ex) {
-        List<String> campos = ex.getFieldErrors().stream()
-                .map(erro -> erro.getField() + ": " + erro.getDefaultMessage())
-                .collect(Collectors.toList());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErroResponseDTO("Erro de validação nos campos", campos));
+    public ResponseEntity<ErroResponseDTO> tratarErroValidacao(MethodArgumentNotValidException ex, HttpServletRequest req) {
+        List<ErroValidacaoDTO> erros = ex.getBindingResult().getFieldErrors().stream().map(e -> new ErroValidacaoDTO(e.getField(), e.getDefaultMessage())).toList();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErroResponseDTO(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "Erro de Validação", "Um ou mais campos estão inválidos", req.getRequestURI(), erros));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErroResponseDTO> tratarErroConstraint(ConstraintViolationException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErroResponseDTO("Violação de restrição do banco de dados", null));
+    public ResponseEntity<ErroResponseDTO> tratarConstraintViolation(ConstraintViolationException ex, HttpServletRequest req) {
+        List<ErroValidacaoDTO> erros = ex.getConstraintViolations().stream().map(v -> new ErroValidacaoDTO(v.getPropertyPath().toString(), v.getMessage())).toList();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErroResponseDTO(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), "Erro de Validação", "Falha de validação de dados.", req.getRequestURI(), erros));
     }
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErroResponseDTO> tratarErroMensagemInlegivel(HttpMessageNotReadableException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErroResponseDTO("Corpo da requisição ausente ou mal formatado", null));
+    @ExceptionHandler(AcessoNegadoException.class)
+    public ResponseEntity<ErroResponseDTO> tratarAcessoNegado(AcessoNegadoException ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErroResponseDTO(LocalDateTime.now(), HttpStatus.FORBIDDEN.value(), "Forbidden", ex.getMessage(), req.getRequestURI()));
     }
 
-    @ExceptionHandler(OptimisticLockingFailureException.class)
-    public ResponseEntity<ErroResponseDTO> tratarErroConcorrencia(OptimisticLockingFailureException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new ErroResponseDTO("O registo foi alterado por outra transação simultânea. Tente novamente.", null));
+    @ExceptionHandler({AuthenticationException.class, BadCredentialsException.class})
+    public ResponseEntity<ErroResponseDTO> tratarErroAutenticacao(Exception ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErroResponseDTO(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), "Unauthorized", "Credenciais inválidas", req.getRequestURI()));
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErroResponseDTO> tratarAcessoNegado(AccessDeniedException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ErroResponseDTO("Você não tem o perfil necessário para aceder a este recurso.", null));
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErroResponseDTO> tratarErroIntegridade(DataIntegrityViolationException ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErroResponseDTO(LocalDateTime.now(), HttpStatus.CONFLICT.value(), "Conflict", "Registro duplicado ou violação de integridade", req.getRequestURI()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErroResponseDTO> tratarErroGenerico(Exception ex, HttpServletRequest req) {
+        ex.printStackTrace(); // Log interno
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErroResponseDTO(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal Server Error", "Ocorreu um erro interno inesperado.", req.getRequestURI()));
     }
 }

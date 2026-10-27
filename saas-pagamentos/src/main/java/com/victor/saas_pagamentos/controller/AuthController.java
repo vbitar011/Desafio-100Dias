@@ -1,14 +1,14 @@
 package com.victor.saas_pagamentos.controller;
 
-import com.victor.saas_pagamentos.dto.LoginRequestDTO;
-import com.victor.saas_pagamentos.dto.RegistroRequestDTO;
-import com.victor.saas_pagamentos.dto.TokenResponseDTO;
+import com.victor.saas_pagamentos.dto.*;
+import com.victor.saas_pagamentos.infra.RegraDeNegocioException;
 import com.victor.saas_pagamentos.infra.security.TokenService;
+import com.victor.saas_pagamentos.model.Cliente;
 import com.victor.saas_pagamentos.model.User;
 import com.victor.saas_pagamentos.model.UserRole;
+import com.victor.saas_pagamentos.repository.ClienteRepository;
 import com.victor.saas_pagamentos.repository.UserRepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,40 +18,56 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+    private final UserRepository userRepository;
+    private final ClienteRepository clienteRepository;
+    private final TokenService tokenService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authManager;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository repository;
-
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public AuthController(UserRepository userRepository, ClienteRepository clienteRepository, TokenService tokenService, PasswordEncoder passwordEncoder, AuthenticationManager authManager) {
+        this.userRepository = userRepository;
+        this.clienteRepository = clienteRepository;
+        this.tokenService = tokenService;
+        this.passwordEncoder = passwordEncoder;
+        this.authManager = authManager;
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid LoginRequestDTO data) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.email(), data.senha());
-        var auth = this.authenticationManager.authenticate(usernamePassword);
-
+    public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid LoginRequestDTO dto) {
+        var usernamePassword = new UsernamePasswordAuthenticationToken(dto.email(), dto.senha());
+        var auth = authManager.authenticate(usernamePassword);
         var token = tokenService.generateToken((User) auth.getPrincipal());
-
         return ResponseEntity.ok(new TokenResponseDTO(token));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid RegistroRequestDTO data) {
-        if (this.repository.findByEmail(data.email()) != null) {
-            throw new RuntimeException("E-mail já cadastrado no sistema");
-        }
+    public ResponseEntity<Void> register(@RequestBody @Valid RegistroRequestDTO dto) {
+        if (userRepository.findByEmail(dto.email()) != null) throw new RegraDeNegocioException("E-mail já está em uso.");
 
-        String encryptedPassword = passwordEncoder.encode(data.senha());
-        //Força papel USER para evitar elevação de privilégios via API
-        User newUser = new User(data.email(), encryptedPassword, UserRole.USER);
+        Cliente cliente = new Cliente();
+        cliente.setNome(dto.nome());
+        cliente.setEmail(dto.email());
+        clienteRepository.save(cliente);
 
-        this.repository.save(newUser);
+        User newUser = new User();
+        newUser.setEmail(dto.email());
+        newUser.setPassword(passwordEncoder.encode(dto.password()));
+        newUser.setRole(UserRole.USER);
+        newUser.setCliente(cliente); // Associa
+        userRepository.save(newUser);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/register-admin")
+    public ResponseEntity<Void> registerAdmin(@RequestBody @Valid RegistroRequestDTO dto) {
+        if (userRepository.findByEmail(dto.email()) != null) throw new RegraDeNegocioException("E-mail já está em uso.");
+
+        User newUser = new User();
+        newUser.setEmail(dto.email());
+        newUser.setPassword(passwordEncoder.encode(dto.password()));
+        newUser.setRole(UserRole.ADMIN); // Sem cliente atrelado
+        userRepository.save(newUser);
 
         return ResponseEntity.ok().build();
     }

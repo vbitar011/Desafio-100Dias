@@ -25,6 +25,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @OneToOne
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
+
     //1. Construtor vazio exigido pelo JPA/Hibernate
     public User() {
     }
@@ -64,6 +68,9 @@ public class User implements UserDetails {
     public void setRole(UserRole role) {
         this.role = role;
     }
+
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
     //4. Métodos obrigatórios do UserDetails
     @Override
