@@ -230,6 +230,11 @@ Erro de Validação: Este pagamento já foi processado e não pode ser pago nova
 *   **Regras de Ownership (Dono do Recurso):** Criação do helper `UsuarioLogado` e vínculo `OneToOne` entre `User` e `Cliente`. As regras de negócio agora garantem que um perfil `USER` apenas pode listar, cancelar ou pagar as suas próprias assinaturas e cobranças (lançando `AcessoNegadoException` com HTTP 403 Forbidden em caso de violação).
 *   **Refatoração de Controladores:** Limpeza do `AssinaturaController` e `PagamentoController`, delegando o acesso a repositórios e a injeção de regras de negócio exclusivamente para as camadas de `Service`.
 *   **Tratador de Erros Global:** Mapeamento de `AuthenticationException` (401 Unauthorized) e `DataIntegrityViolationException` (409 Conflict) para retornos JSON padronizados, ocultando *stack traces* não tratados.
+*   **Bootstrap de Administrador (`ApplicationRunner`):** Implementação do `AdminInicializador` que lê as variáveis de ambiente `APP_ADMIN_EMAIL` e `APP_ADMIN_PASSWORD` no arranque da aplicação. Se não existir, cria o primeiro `ADMIN` automaticamente e de forma segura (com encriptação BCrypt), sem expor a criação de administradores ao público.
+*   **Endpoint Seguro para Admins (`POST /auth/register-admin`):** Criação de uma rota exclusiva (protegida por `.hasRole("ADMIN")`) para que administradores existentes possam convidar ou criar novos administradores. Retorna HTTP 201 Created.
+*   **Separação de DTOs e Validações:** Criação do `RegistroAdminRequestDTO` (excluindo a obrigatoriedade do nome/cliente) e implementação de uma política de senhas rigorosa (`@Size(min = 8, max = 72)`) tanto no registo de clientes como de admins, protegendo o sistema contra senhas fracas e ataques de negação de serviço no BCrypt.*   **Bootstrap de Administrador (`ApplicationRunner`):** Implementação do `AdminInicializador` que lê as variáveis de ambiente `APP_ADMIN_EMAIL` e `APP_ADMIN_PASSWORD` no arranque da aplicação. Se não existir, cria o primeiro `ADMIN` automaticamente e de forma segura (com encriptação BCrypt), sem expor a criação de administradores ao público.
+*   **Endpoint Seguro para Admins (`POST /auth/register-admin`):** Criação de uma rota exclusiva (protegida por `.hasRole("ADMIN")`) para que administradores existentes possam convidar ou criar novos administradores. Retorna HTTP 201 Created.
+*   **Separação de DTOs e Validações:** Criação do `RegistroAdminRequestDTO` (excluindo a obrigatoriedade do nome/cliente) e implementação de uma política de senhas rigorosa (`@Size(min = 8, max = 72)`) tanto no registo de clientes como de admins, protegendo o sistema contra senhas fracas e ataques de negação de serviço no BCrypt.
 
 ### Configuração de Ambiente Local
 O projeto exige a injeção das seguintes variáveis de ambiente na IDE de execução (baseado num ficheiro `.env` estritamente local e não versionado):
@@ -237,7 +242,6 @@ O projeto exige a injeção das seguintes variáveis de ambiente na IDE de execu
 * `DB_USERNAME`: Utilizador da base de dados.
 * `DB_PASSWORD`: Senha do utilizador.
 * `API_SECURITY_TOKEN_SECRET`: Chave criptográfica (mínimo 256 bits) para assinatura dos tokens JWT.
-> **Nota:** Utilize o ficheiro `.env.example` versionado como template para a configuração inicial.
 
 ## Matriz de Permissões (RBAC) e Tratamento de Erros
 * `ADMIN`: Acesso total. Exclusivo para criação de planos (`POST /planos`) e cancelamento forçado (`DELETE /assinaturas/**` e `DELETE /pagamentos/**`).

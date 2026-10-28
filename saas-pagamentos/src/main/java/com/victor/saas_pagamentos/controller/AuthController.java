@@ -60,15 +60,18 @@ public class AuthController {
     }
 
     @PostMapping("/register-admin")
-    public ResponseEntity<Void> registerAdmin(@RequestBody @Valid RegistroRequestDTO dto) {
-        if (userRepository.findByEmail(dto.email()) != null) throw new RegraDeNegocioException("E-mail já está em uso.");
+    public ResponseEntity<Void> registerAdmin(@RequestBody @Valid RegistroAdminRequestDTO dto) {
+        if (userRepository.findByEmail(dto.email()) != null) {
+            throw new RegraDeNegocioException("E-mail já está em uso.");
+        }
 
         User newUser = new User();
         newUser.setEmail(dto.email());
         newUser.setPassword(passwordEncoder.encode(dto.password()));
-        newUser.setRole(UserRole.ADMIN); // Sem cliente atrelado
+        newUser.setRole(UserRole.ADMIN);
+        //Não vinculamos Cliente, pois ADMIN é apenas de sistema
         userRepository.save(newUser);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).build();
     }
 }
