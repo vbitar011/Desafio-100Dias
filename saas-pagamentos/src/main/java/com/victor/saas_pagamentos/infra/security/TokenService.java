@@ -16,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 @Service
 public class TokenService {
 
-    @Value("${API_SECURITY_TOKEN_SECRET}")//Valor padrão se esquecer de colocar no application.properties
+    @Value("${API_SECURITY_TOKEN_SECRET}")
     private String secret;
 
     public String generateToken(User user) {

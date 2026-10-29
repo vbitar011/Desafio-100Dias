@@ -242,6 +242,10 @@ O projeto exige a injeção das seguintes variáveis de ambiente na IDE de execu
 * `DB_USERNAME`: Utilizador da base de dados.
 * `DB_PASSWORD`: Senha do utilizador.
 * `API_SECURITY_TOKEN_SECRET`: Chave criptográfica (mínimo 256 bits) para assinatura dos tokens JWT.
+*   **Migrações com Flyway:** Implementação do Flyway para versionamento estrito da base de dados. Criação do `V1__schema_inicial.sql` (estrutura original) e `V2__correcoes.sql` (otimizações de `DECIMAL`, criação da coluna `version` para Optimistic Locking e adição de chaves estrangeiras/índices únicos de segurança).
+*   **Isolamento de Configurações (.env):** O sistema agora carrega segredos e credenciais exclusivamente através de um ficheiro `.env` nativamente integrado no Spring Boot via `spring.config.import`. O ficheiro `application-dev.properties` foi removido do rastreio de versão.
+*   **Injeção Segura de Segredos:** Refatoração do `TokenService` para consumir o `API_SECURITY_TOKEN_SECRET` de forma encapsulada pelo ecossistema Spring (`@Value`), garantindo maior segurança e facilidade de substituição em testes.
+*   **Adequação do Hibernate:** Resolução de conflitos de tipos (UUID vs Long) na entidade `User` e alinhamento do `ddl-auto` para respeitar o esquema mestre governado pelo Flyway.
 
 ## Matriz de Permissões (RBAC) e Tratamento de Erros
 * `ADMIN`: Acesso total. Exclusivo para criação de planos (`POST /planos`) e cancelamento forçado (`DELETE /assinaturas/**` e `DELETE /pagamentos/**`).
