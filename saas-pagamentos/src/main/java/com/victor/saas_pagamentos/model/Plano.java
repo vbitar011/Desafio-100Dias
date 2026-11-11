@@ -1,6 +1,9 @@
 package com.victor.saas_pagamentos.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
@@ -11,8 +14,12 @@ public class Plano {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //A chave primária, gerada automaticamente pelo banco.
 
+    @NotBlank
+    @Column(nullable = false)
     private String nome;
 
+    @NotNull
+    @Positive
     @Column(precision = 12, scale = 2)
     private BigDecimal valor;
 

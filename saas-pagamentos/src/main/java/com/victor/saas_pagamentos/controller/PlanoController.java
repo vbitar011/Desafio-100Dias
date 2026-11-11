@@ -5,6 +5,9 @@ import com.victor.saas_pagamentos.dto.PlanoResponseDTO;
 import com.victor.saas_pagamentos.model.Plano;
 import com.victor.saas_pagamentos.repository.PlanoRepository;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,11 +35,9 @@ public class PlanoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PlanoResponseDTO>> listarPlanos() {
-        List<PlanoResponseDTO> planos = repository.findAll().stream()
-                .map(p -> new PlanoResponseDTO(p.getId(), p.getNome(), p.getValor()))
-                .toList();
-
-        return ResponseEntity.ok(planos);
+    public ResponseEntity<Page<PlanoResponseDTO>> listarPlanos(@PageableDefault(size = 10) Pageable pageable) {
+        Page<Plano> planos = repository.findAll(pageable);
+        Page<PlanoResponseDTO> page = planos.map(p -> new PlanoResponseDTO(p.getId(), p.getNome(), p.getValor()));
+        return ResponseEntity.ok(page);
     }
 }

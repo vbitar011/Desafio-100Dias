@@ -5,6 +5,9 @@ import com.victor.saas_pagamentos.dto.AssinaturaResponseDTO;
 import com.victor.saas_pagamentos.model.Assinatura;
 import com.victor.saas_pagamentos.service.AssinaturaService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,10 +36,9 @@ public class AssinaturaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AssinaturaResponseDTO>> listarAssinaturas() {
-        List<AssinaturaResponseDTO> lista = assinaturaService.listar().stream()
-                .map(a -> new AssinaturaResponseDTO(a.getId(), a.getCliente().getId(), a.getPlano().getId(), a.getDataInicio(), a.getStatus().name()))
-                .toList();
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<Page<AssinaturaResponseDTO>> listarAssinaturas(@PageableDefault(size = 10) Pageable pageable) {
+        Page<AssinaturaResponseDTO> page = assinaturaService.listar(pageable)
+                .map(a -> new AssinaturaResponseDTO(a.getId(), a.getCliente().getId(), a.getPlano().getId(), a.getDataInicio(), a.getStatus().name()));
+        return ResponseEntity.ok(page);
     }
 }

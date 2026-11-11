@@ -46,7 +46,9 @@ public class Pagamento {
     public Assinatura getAssinatura() { return assinatura; }
     public void setAssinatura(Assinatura assinatura) { this.assinatura = assinatura; }
 
-    public @NotNull(message = "O valor do pagamento é obrigatório.") @Positive(message = "O valor da cobrança não pode ser negativo ou zero.") BigDecimal getValor() { return valor; }
+    public @NotNull(message = "O valor do pagamento é obrigatório.")
+    @Positive(message = "O valor da cobrança não pode ser negativo ou zero.")
+    BigDecimal getValor() { return valor; }
     public void setValor(BigDecimal valor) { this.valor = valor; }
 
     public LocalDate getDataVencimento() { return dataVencimento; }

@@ -7,6 +7,8 @@ import com.victor.saas_pagamentos.infra.security.UsuarioLogado;
 import com.victor.saas_pagamentos.model.*;
 import com.victor.saas_pagamentos.repository.AssinaturaRepository;
 import com.victor.saas_pagamentos.repository.PagamentoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,13 +70,13 @@ public class PagamentoService {
         return pagamentoRepository.save(pagamento);
     }
 
-    public List<Pagamento> listar() {
+    public Page<Pagamento> listar(Pageable pageable) {
         User user = usuarioLogado.get();
         if (user.getRole() == UserRole.ADMIN) {
-            return pagamentoRepository.findAll();
+            return pagamentoRepository.findAll(pageable);
         } else {
-            if (user.getCliente() == null) return List.of();
-            return pagamentoRepository.findByAssinaturaClienteId(user.getCliente().getId());
+            if (user.getCliente() == null) return Page.empty(); //Retorna Page vazia em vez de List
+            return pagamentoRepository.findByAssinaturaClienteId(user.getCliente().getId(), pageable);
         }
     }
 

@@ -8,11 +8,12 @@ import com.victor.saas_pagamentos.model.*;
 import com.victor.saas_pagamentos.repository.AssinaturaRepository;
 import com.victor.saas_pagamentos.repository.ClienteRepository;
 import com.victor.saas_pagamentos.repository.PlanoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class AssinaturaService {
@@ -75,13 +76,13 @@ public class AssinaturaService {
         return assinaturaRepository.save(assinatura);
     }
 
-    public List<Assinatura> listar() {
+    public Page<Assinatura> listar(Pageable pageable) {
         User user = usuarioLogado.get();
         if (user.getRole() == UserRole.ADMIN) {
-            return assinaturaRepository.findAll();
+            return assinaturaRepository.findAll(pageable);
         } else {
-            if (user.getCliente() == null) return List.of();
-            return assinaturaRepository.findByClienteId(user.getCliente().getId());
+            if (user.getCliente() == null) return Page.empty();
+            return assinaturaRepository.findByClienteId(user.getCliente().getId(), pageable);
         }
     }
 }

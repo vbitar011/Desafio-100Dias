@@ -5,6 +5,9 @@ import com.victor.saas_pagamentos.dto.PagamentoResponseDTO;
 import com.victor.saas_pagamentos.model.Pagamento;
 import com.victor.saas_pagamentos.service.PagamentoService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +24,10 @@ public class PagamentoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PagamentoResponseDTO>> listarPagamentos() {
-        List<PagamentoResponseDTO> lista = pagamentoService.listar().stream()
-                .map(this::mapearParaDTO)
-                .toList();
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<Page<PagamentoResponseDTO>> listarPagamentos(@PageableDefault(size = 10) Pageable pageable) {
+        Page<Pagamento> pagamentos = pagamentoService.listar(pageable);
+        Page<PagamentoResponseDTO> page = pagamentos.map(this::mapearParaDTO);
+        return ResponseEntity.ok(page);
     }
 
     @PostMapping

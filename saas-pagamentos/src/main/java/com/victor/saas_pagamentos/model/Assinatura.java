@@ -17,8 +17,8 @@ public class Assinatura {
     private Cliente cliente;
 
     @NotNull(message = "O plano é obrigatório.")
-    @ManyToOne //Muitas assinaturas podem estar ligadas a um plano
-    @JoinColumn(name = "plano_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plano_id", nullable = false)
     private Plano plano;
 
     //Dados de controle da assinatura

@@ -5,6 +5,9 @@ import com.victor.saas_pagamentos.dto.ClienteResponseDTO;
 import com.victor.saas_pagamentos.model.Cliente;
 import com.victor.saas_pagamentos.repository.ClienteRepository;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,11 +35,9 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ClienteResponseDTO>> listarClientes() {
-        List<ClienteResponseDTO> clientes = repository.findAll().stream()
-                .map(c -> new ClienteResponseDTO(c.getId(), c.getNome(), c.getEmail()))
-                .toList();
-
-        return ResponseEntity.ok(clientes);
+    public ResponseEntity<Page<ClienteResponseDTO>> listarClientes(@PageableDefault(size = 10) Pageable pageable) {
+        Page<Cliente> clientes = repository.findAll(pageable);
+        Page<ClienteResponseDTO> page = clientes.map(c -> new ClienteResponseDTO(c.getId(), c.getNome(), c.getEmail()));
+        return ResponseEntity.ok(page);
     }
 }
